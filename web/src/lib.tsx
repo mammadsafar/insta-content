@@ -1,0 +1,40 @@
+import React,{createContext,useContext,useEffect,useState} from 'react';
+import {X,LoaderCircle,Sun,Plus} from 'lucide-react';
+export type Row=Record<string,any>;
+export type User={id:string;name:string;email:string;role:string;theme:string;permissions:Row[]};
+export const Session=createContext<{user:User;refresh:()=>Promise<void>;pages:Row[];toast:(s:string)=>void}>({} as any);
+export const useSession=()=>useContext(Session);
+let csrf='';
+export async function api<T=any>(path:string,body?:unknown,method?:string):Promise<T>{
+ const response=await fetch(`/api${path}`,{method:method||(body===undefined?'GET':'POST'),credentials:'same-origin',headers:{...(body!==undefined?{'Content-Type':'application/json'}:{}),...(csrf?{'X-CSRF-Token':csrf}:{})},body:body===undefined?undefined:JSON.stringify(body)});
+ const token=response.headers.get('x-csrf-token');if(token)csrf=token;
+ const value=await response.json().catch(()=>({error:'پاسخ سرور قابل خواندن نیست'}));
+ if(!response.ok){if(response.status===401)window.dispatchEvent(new Event('session-expired'));throw new Error(value.error||'ارتباط با سرور برقرار نشد');}
+ return value.data;
+}
+export function can(user:User,pageId:string,permission:string){return user.role==='owner'||user.permissions?.some(p=>p.page_id===pageId&&p[`can_${permission}`]);}
+export const fa=(n:number|string)=>new Intl.NumberFormat('fa-IR').format(Number(n));
+export function localDate(date=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tehran',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);}
+export function dateLabel(value?:string|null,full=false){if(!value)return 'بدون تاریخ';const date=new Date(value.length===10?`${value}T12:00:00+03:30`:value);return new Intl.DateTimeFormat('fa-IR',{timeZone:'Asia/Tehran',weekday:full?'long':'short',day:'numeric',month:'long',...(full?{year:'numeric'}:{})}).format(date);}
+export function instantLabel(value?:string){if(!value)return 'ثبت نشده';return `${dateLabel(value)}، ${new Intl.DateTimeFormat('fa-IR',{timeZone:'Asia/Tehran',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value))}`;}
+export function addDays(date:string,count:number){const d=new Date(`${date}T12:00:00Z`);d.setUTCDate(d.getUTCDate()+count);return d.toISOString().slice(0,10);}
+export const typeLabels:Row={reel:'ریلز / ویدیو',image:'پست تصویری',image_carousel:'اسلاید تصویری',video_carousel:'اسلاید ویدیویی',mixed_carousel:'اسلاید ترکیبی',image_story:'استوری تصویری',video_story:'استوری ویدیویی'};
+export const stateLabels:Row={draft:'پیش‌نویس',awaiting_approval:'منتظر تأیید',changes_required:'نیازمند اصلاح',approved:'تأیید شده',published:'منتشر شده'};
+export const mediaUrl=(id:string,thumb=false)=>`/api/media/${id}${thumb?'?thumbnail=1':''}`;
+export function StateBadge({state}:{state:string}){return <span className={`badge state-${state}`}>{stateLabels[state]||state}</span>;}
+export function Empty({title,children}:{title:string;children?:React.ReactNode}){return <div className="empty"><span className="empty-icon"><Sun size={28}/></span><h3>{title}</h3>{children&&<p>{children}</p>}</div>;}
+export function Spinner(){return <div className="loading" role="status"><LoaderCircle className="spin" size={22}/><span>در حال دریافت…</span></div>;}
+export function ErrorBox({error,retry}:{error:string;retry?:()=>void}){return <div role="alert" className="error">{error}{retry&&<button onClick={retry}>تلاش دوباره</button>}</div>;}
+export function Modal({title,children,onClose,wide=false}:{title:string;children:React.ReactNode;onClose:()=>void;wide?:boolean}){
+ useEffect(()=>{const previous=document.activeElement as HTMLElement;const handler=(e:KeyboardEvent)=>{if(e.key==='Escape')onClose();if(e.key==='Tab'){const modal=document.querySelector('[role="dialog"]');const all=modal?.querySelectorAll<HTMLElement>('button:not(:disabled),input,select,textarea,a[href],[tabindex="0"]');if(!all?.length)return;const first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}};document.addEventListener('keydown',handler);document.body.style.overflow='hidden';const timer=setTimeout(()=>document.querySelector<HTMLElement>('[role="dialog"] button')?.focus(),0);return()=>{clearTimeout(timer);document.removeEventListener('keydown',handler);document.body.style.overflow='';previous?.focus();};},[]);
+ return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><section className={`modal ${wide?'wide':''}`} role="dialog" aria-modal="true" aria-label={title}><div className="modal-heading"><h2>{title}</h2><button className="icon-button" aria-label="بستن" onClick={onClose}><X size={22}/></button></div>{children}</section></div>;
+}
+export function useResource<T=any>(path:string|null,deps:unknown[]=[]){const [data,setData]=useState<T|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);async function refresh(){if(!path){setLoading(false);return;}setLoading(true);setError('');try{setData(await api<T>(path));}catch(e){setError((e as Error).message);}finally{setLoading(false);}}useEffect(()=>{void refresh();},[path,...deps]);return {data,error,loading,refresh,setData};}
+export function Field({label,children,hint}:{label:string;children:React.ReactNode;hint?:string}){return <label className="field"><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>;}
+export function Action({children,run,className='',disabled=false}:{children:React.ReactNode;run:()=>Promise<any>;className?:string;disabled?:boolean}){const [busy,setBusy]=useState(false),[error,setError]=useState('');return <><button disabled={busy||disabled} className={className} onClick={async()=>{setBusy(true);setError('');try{await run();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}}>{busy?<LoaderCircle className="spin" size={18}/>:children}</button>{error&&<ErrorBox error={error}/>}</>;}
+export function AddButton({children,onClick}:{children:React.ReactNode;onClick:()=>void}){return <button className="primary" onClick={onClick}><Plus size={18}/>{children}</button>;}
+export function Upload({pageId,purpose='content',accept='image/*,video/*',onUploaded,multiple=true}:{pageId:string;purpose?:string;accept?:string;onUploaded:(asset:Row)=>void;multiple?:boolean}){
+ const [jobs,setJobs]=useState<{file:File;progress:number;error:string;done:boolean}[]>([]);
+ function transfer(file:File){setJobs(previous=>[...previous.filter(j=>j.file!==file),{file,progress:0,error:'',done:false}]);const xhr=new XMLHttpRequest();xhr.open('POST',`/api/media?purpose=${purpose}&pageId=${pageId}`);xhr.withCredentials=true;if(csrf)xhr.setRequestHeader('X-CSRF-Token',csrf);const update=(change:Row)=>setJobs(previous=>previous.map(j=>j.file===file?{...j,...change}:j));xhr.upload.onprogress=e=>update({progress:e.lengthComputable?Math.round(e.loaded/e.total*100):0});xhr.onload=()=>{try{const value=JSON.parse(xhr.responseText);if(xhr.status<200||xhr.status>=300)throw new Error(value.error||'بارگذاری ناموفق');update({done:true,progress:100});onUploaded(value.data);}catch(e){update({error:(e as Error).message});}};xhr.onerror=()=>update({error:'ارتباط قطع شد؛ فایل را دوباره بارگذاری کنید.'});const body=new FormData();body.append('file',file);xhr.send(body);}
+ return <div className="upload"><label className="upload-target"><Plus size={22}/><strong>انتخاب فایل</strong><span>فایل اصلی شما بدون تغییر نگهداری می‌شود</span><input type="file" accept={accept} multiple={multiple} onChange={e=>{for(const file of Array.from(e.target.files||[]))transfer(file);e.target.value='';}}/></label>{jobs.map((j,i)=><div className="upload-job" key={i}><span dir="auto">{j.file.name}</span><progress max="100" value={j.progress}/>{j.error?<><small className="danger-text">{j.error}</small><button onClick={()=>transfer(j.file)}>تلاش دوباره</button></>:<small>{j.done?'آماده':`${fa(j.progress)}٪`}</small>}</div>)}</div>;
+}

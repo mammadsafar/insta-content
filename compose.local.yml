@@ -1,0 +1,99 @@
+name: rooz-local
+
+x-runtime: &runtime
+  image: rooz-local:latest
+  build:
+    context: .
+    target: production
+  init: true
+  restart: unless-stopped
+  stop_grace_period: 30s
+  security_opt:
+    - no-new-privileges:true
+  cap_drop: [ALL]
+  environment: &environment
+    NODE_ENV: production
+    DATABASE_URL: postgres://rooz:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/rooz
+    APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+    HOST: 0.0.0.0
+    PORT: 3000
+    MEDIA_ROOT: /app/media
+    FILE_MAX_BYTES: ${FILE_MAX_BYTES:-104857600}
+    SESSION_TTL_DAYS: ${SESSION_TTL_DAYS:-30}
+    TRUST_PROXY: "false"
+    VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+    VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+    VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+  volumes:
+    - media:/app/media
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      POSTGRES_USER: rooz
+      POSTGRES_DB: rooz
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U rooz -d rooz"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [private]
+
+  app:
+    <<: *runtime
+    ports:
+      - "127.0.0.1:${LOCAL_APP_PORT:-3000}:3000"
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    networks: [private, egress]
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server
+        - action: rebuild
+          path: ./scripts
+        - action: rebuild
+          path: ./web
+        - action: rebuild
+          path: ./package.json
+        - action: rebuild
+          path: ./package-lock.json
+
+  worker:
+    <<: *runtime
+    command: [node, dist/server/worker.js]
+    healthcheck:
+      test: [CMD, node, --input-type=module, -e, "import pg from 'pg';const p=new pg.Pool({connectionString:process.env.DATABASE_URL});try{const r=await p.query(\"SELECT 1 FROM worker_heartbeats WHERE updated_at > now() - interval '2 minutes' LIMIT 1\");if(!r.rowCount)process.exitCode=1}finally{await p.end()}"]
+      interval: 30s
+      timeout: 10s
+      retries: 4
+      start_period: 30s
+    networks: [private, egress]
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server
+        - action: rebuild
+          path: ./scripts
+
+networks:
+  private:
+    internal: true
+  egress: {}
+
+volumes:
+  database: {}
+  media: {}
