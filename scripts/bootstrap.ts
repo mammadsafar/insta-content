@@ -59,7 +59,7 @@ export async function bootstrapOwner(input: { name: string; email: string; passw
       const page = await client.query('INSERT INTO pages(name,reminder_user_id) VALUES($1,$2) RETURNING id', [name.trim(), owner.rows[0].id]);
       await client.query("INSERT INTO schedule_rules(page_id,effective_date,posts_per_day,times) VALUES($1,'1970-01-01',2,'[]')", [page.rows[0].id]);
     }
-    await client.query("INSERT INTO audit_logs(actor_id,action,target_type,target_id,detail) VALUES($1,'owner.bootstrap','user',$1,'{}')", [owner.rows[0].id]);
+    await client.query("INSERT INTO audit_logs(actor_id,action,target_type,target_id,detail) VALUES($1::uuid,'owner.bootstrap','user',$1::text,'{}')", [owner.rows[0].id]);
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK');

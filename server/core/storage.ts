@@ -15,7 +15,7 @@ const videoTypes = new Set(['video/mp4', 'video/webm', 'video/quicktime']);
 const audioTypes = new Set(['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/x-wav', 'audio/webm', 'audio/aac', 'audio/flac', 'audio/x-flac']);
 const keyPattern = /^[a-f0-9-]{36}\.(?:original|thumb\.webp|pending)$/;
 
-export function storageRoot(): string { return resolve(process.env.MEDIA_DIR || './var/media'); }
+export function storageRoot(): string { return resolve(process.env.MEDIA_ROOT || process.env.MEDIA_DIR || './var/media'); }
 export function fileMaxBytes(): number {
   const value = Number(process.env.FILE_MAX_BYTES || 524288000);
   if (!Number.isSafeInteger(value) || value < 1) throw new Error('FILE_MAX_BYTES must be a positive safe integer');
@@ -89,10 +89,13 @@ export async function storeUpload(stream: Readable, options: { root?: string; ma
     let dimensions: { width?: number; height?: number } = {};
     if (imageTypes.has(mime)) {
       const image = sharp(originalPath, { limitInputPixels: 80_000_000, animated: false, failOn: 'error' });
-      const metadata = await image.metadata();
+      const metadata = await image.metadata().catch(()=>{throw new HttpError(415,'ساختار تصویر معتبر نیست');});
       if (!metadata.width || !metadata.height) throw new HttpError(415, 'تصویر معتبر نیست');
       dimensions = { width: metadata.width, height: metadata.height };
-      await image.rotate().resize(640, 640, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(storagePath(thumbnailKey, root));
+      await image.rotate().resize(640, 640, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(storagePath(thumbnailKey, root)).catch((error:any)=>{
+        if(['ENOSPC','EACCES','EIO'].includes(error.code))throw error;
+        throw new HttpError(415,'ساختار تصویر معتبر نیست');
+      });
       await chmod(storagePath(thumbnailKey, root), 0o400);
     }
     await chmod(originalPath, 0o400);

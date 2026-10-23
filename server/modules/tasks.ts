@@ -31,6 +31,8 @@ export async function registerTasks(app:FastifyInstance):Promise<void> {
     const assigned=user.role==='owner'&&assignee!==user.id;
     return {data:await transaction(async c=>{
       const r=await c.query(`INSERT INTO task_templates(title,creator_id,assignee_id,priority,weekdays,due_date,owner_assigned) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *`,[b.title,user.id,assignee,assigned&&b.recurrence?1:b.priority,b.recurrence?JSON.stringify([...new Set(b.recurrence.weekdays)]):null,b.dueDate??null,assigned]);
+      const today=localDate(),weekday=new Date(`${today}T12:00:00Z`).getUTCDay();
+      if(!b.recurrence||b.recurrence.weekdays.includes(weekday))await c.query('INSERT INTO task_occurrences(template_id,date) VALUES($1,$2) ON CONFLICT DO NOTHING',[r.rows[0].id,b.recurrence?today:b.dueDate??today]);
       await audit(c,user.id,'task.create','task',r.rows[0].id,{});
       if(assigned)await notify(c,assignee,'task_assignment','کار تازه‌ای به شما واگذار شد.',{taskId:r.rows[0].id,href:'/today'},user.id);
       return r.rows[0];

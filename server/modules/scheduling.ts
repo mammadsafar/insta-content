@@ -10,6 +10,7 @@ import {planSchedule,type Slot,type ScheduleRequest} from './schedule-plan.js';
 
 const requestSchema=z.object({operation:z.enum(['swap','insert','delete','restore']),contentId:idSchema,targetId:idSchema.optional(),slot:z.object({date:dateSchema,position:z.number().int().min(1).max(1000),time:timeSchema.nullable().optional()}).strict().optional()}).strict();
 function fingerprint(value:unknown){return createHash('sha256').update(JSON.stringify(value)).digest('hex');}
+const slotSignature=(slots:Slot[])=>slots.map(x=>[x.contentId,x.date,x.position,x.time??null]);
 async function preview(client:PoolClient,pageId:string,body:ScheduleRequest,page:any) {
   const content=(await client.query('SELECT id,type,published_at,trashed_at,revision FROM content WHERE page_id=$1 ORDER BY id',[pageId])).rows;
   const item=content.find(x=>x.id===body.contentId);
@@ -66,7 +67,7 @@ export async function registerScheduling(app:FastifyInstance) {
       const op=(await client.query('SELECT * FROM schedule_operations WHERE id=$1 AND page_id=$2 FOR UPDATE',[body.operationId,pageId])).rows[0];
       if(!op||op.undone||op.applied_version!==page.schedule_version||body.expectedVersion!==page.schedule_version)throw new HttpError(409,'این عملیات دیگر با اطمینان قابل بازگشت نیست.');
       const live=(await client.query('SELECT content_id AS "contentId",date,position,time::text FROM schedule_slots WHERE page_id=$1 ORDER BY date,position',[pageId])).rows.map(x=>({...x,time:x.time?.slice(0,5)??null}));
-      if(JSON.stringify(live)!==JSON.stringify(op.after_state.slots))throw new HttpError(409,'جایگاه‌ها پس از این عملیات تغییر کرده‌اند.');
+      if(JSON.stringify(slotSignature(live))!==JSON.stringify(slotSignature(op.after_state.slots)))throw new HttpError(409,'جایگاه‌ها پس از این عملیات تغییر کرده‌اند.');
       const changedIds=new Set<string>([...op.before_state.slots,...op.after_state.slots].filter((x:Slot)=>JSON.stringify(op.before_state.slots.find((s:Slot)=>s.contentId===x.contentId))!==JSON.stringify(op.after_state.slots.find((s:Slot)=>s.contentId===x.contentId))).map((x:Slot)=>x.contentId));
       changedIds.add(op.before_state.contentId);
       if((await client.query('SELECT id FROM content WHERE id=ANY($1::uuid[]) AND published_at IS NOT NULL',[[...changedIds]])).rows.length)throw new HttpError(409,'محتوای مرتبط منتشر شده است و بازگشت ممکن نیست.');

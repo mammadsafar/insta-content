@@ -16,7 +16,8 @@
     "migrate": "tsx scripts/migrate.ts",
     "bootstrap": "tsx scripts/bootstrap.ts",
     "check": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
-    "test": "tsx --test --test-concurrency=1 tests/*.test.ts",
+    "test": "tsx --import ./tests/database-guard.mjs --test --test-concurrency=1 tests/*.test.ts",
+    "test:unit": "tsx --test tests/content-schedule.test.ts tests/operations-time.test.ts tests/operations-validation.test.ts tests/media-storage.test.ts tests/compose.test.ts",
     "test:coverage": "c8 --reporter=text --reporter=lcov npm test",
     "test:e2e": "playwright test"
   },

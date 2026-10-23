@@ -5,7 +5,7 @@
       "label": "Content Operations Platform",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -16,7 +16,7 @@
       "label": "Secure Authentication",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1144",
+      "source_location": "L1144",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -27,7 +27,7 @@
       "label": "Page Permissions",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:376",
+      "source_location": "L376",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -38,7 +38,7 @@
       "label": "Owner Approval",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L634",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -49,7 +49,7 @@
       "label": "Content Revisions",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:425",
+      "source_location": "L425",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -60,7 +60,7 @@
       "label": "Private Media",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1091",
+      "source_location": "L1091",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -71,7 +71,7 @@
       "label": "Text and Voice Feedback",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:668",
+      "source_location": "L668",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -82,7 +82,7 @@
       "label": "Manual Publication",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L708",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -93,7 +93,7 @@
       "label": "Transactional Post Schedule",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:539",
+      "source_location": "L539",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -104,7 +104,7 @@
       "label": "Story Packages",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:748",
+      "source_location": "L748",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -115,7 +115,7 @@
       "label": "Independent Task Occurrences",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:804",
+      "source_location": "L804",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -126,7 +126,7 @@
       "label": "Analytics Snapshots",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:843",
+      "source_location": "L843",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -137,7 +137,7 @@
       "label": "Analytics Responsibility and Reminders",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:932",
+      "source_location": "L932",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -148,7 +148,7 @@
       "label": "Weekly Page Reports",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:957",
+      "source_location": "L957",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -159,7 +159,7 @@
       "label": "Today Operations",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1001",
+      "source_location": "L1001",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -170,7 +170,7 @@
       "label": "Authorized Reports",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1001",
+      "source_location": "L1001",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -181,7 +181,7 @@
       "label": "Notifications",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1057",
+      "source_location": "L1057",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -192,7 +192,7 @@
       "label": "PWA and Offline State",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1120",
+      "source_location": "L1120",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -203,7 +203,7 @@
       "label": "Asia Tehran Business Time",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:336",
+      "source_location": "L336",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -214,7 +214,7 @@
       "label": "Jalali Wheel Picker",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:336",
+      "source_location": "L336",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -225,7 +225,7 @@
       "label": "Persian RTL Themes",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:293",
+      "source_location": "L293",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -236,7 +236,7 @@
       "label": "Independent Docker Environments",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:197",
+      "source_location": "L197",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -247,7 +247,7 @@
       "label": "Source Only Graphify Map",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:53",
+      "source_location": "L53",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -258,7 +258,7 @@
       "label": "Required Workflow Verification",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1201",
+      "source_location": "L1201",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -269,7 +269,7 @@
       "label": "Missing Zero and Unavailable Metrics",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:917",
+      "source_location": "L917",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -280,7 +280,7 @@
       "label": "Fastify React Modular Monolith",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:5",
+      "source_location": "L5",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -291,7 +291,7 @@
       "label": "PostgreSQL Transactional State",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:5",
+      "source_location": "L5",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -302,7 +302,7 @@
       "label": "Database Backed Durable Jobs",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:6",
+      "source_location": "L6",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -313,7 +313,7 @@
       "label": "Opaque Secure Sessions",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:7",
+      "source_location": "L7",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -324,7 +324,7 @@
       "label": "Schedule Version Lock",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:9",
+      "source_location": "L9",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -335,7 +335,7 @@
       "label": "Immutable Published Revisions",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:10",
+      "source_location": "L10",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -346,7 +346,7 @@
       "label": "Explicit Metric Completeness",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:11",
+      "source_location": "L11",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -357,7 +357,7 @@
       "label": "Tehran Date Boundaries",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:8",
+      "source_location": "L8",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -368,7 +368,7 @@
       "label": "Private Input Exclusion",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:12",
+      "source_location": "L12",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -379,7 +379,7 @@
       "label": "API Contract",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -390,7 +390,7 @@
       "label": "Server Authorization Boundary",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:8",
+      "source_location": "L8",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -401,7 +401,7 @@
       "label": "Revision Approval Publication Routes",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:16",
+      "source_location": "L16",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -412,7 +412,7 @@
       "label": "Preview and Apply Schedule Routes",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:18",
+      "source_location": "L18",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -423,7 +423,7 @@
       "label": "Private Streaming and Downloads",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:20",
+      "source_location": "L20",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -434,7 +434,7 @@
       "label": "Versioned Analytics Routes",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:22",
+      "source_location": "L22",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -445,7 +445,7 @@
       "label": "Weekly Report Routes",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:23",
+      "source_location": "L23",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -456,7 +456,7 @@
       "label": "Publication Job Contract",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:17",
+      "source_location": "L17",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -467,7 +467,7 @@
       "label": "Implementation Plan",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -478,7 +478,7 @@
       "label": "Foundation and Integration Ownership",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:15",
+      "source_location": "L15",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -489,7 +489,7 @@
       "label": "Content Module Ownership",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:16",
+      "source_location": "L16",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -500,7 +500,7 @@
       "label": "Operations Module Ownership",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:17",
+      "source_location": "L17",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -511,7 +511,7 @@
       "label": "Private File Ownership",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:18",
+      "source_location": "L18",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -522,7 +522,7 @@
       "label": "Interface Ownership",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:19",
+      "source_location": "L19",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -533,7 +533,7 @@
       "label": "Environment Ownership",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:20",
+      "source_location": "L20",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -544,7 +544,7 @@
       "label": "Real Workflow Integration",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:21",
+      "source_location": "L21",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -555,7 +555,7 @@
       "label": "Initial Environment Inspection",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PROGRESS.md",
-      "source_location": "docs/PROGRESS.md:3",
+      "source_location": "L3",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -566,7 +566,7 @@
       "label": "Installed Packaged Graphify Skill",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PROGRESS.md",
-      "source_location": "docs/PROGRESS.md:8",
+      "source_location": "L8",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -577,7 +577,326 @@
       "label": "Verified Status Requires Evidence",
       "file_type": "concept",
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PROGRESS.md",
-      "source_location": "docs/PROGRESS.md:13",
+      "source_location": "L13",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_architecture_runtime",
+      "label": "Runtime Entry Boundaries",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_architecture_workflow_boundaries",
+      "label": "Revision and Schedule Boundaries",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_architecture_worker_recovery",
+      "label": "Durable Worker Failure Recovery",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_architecture_deployment_boundaries",
+      "label": "Environment and Security Boundaries",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L34",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_data_model_schema",
+      "label": "Relational Data Model",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_data_model_revision_tables",
+      "label": "Stable Content and Revision Tables",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_data_model_schedule_tables",
+      "label": "Transactional Scheduling Tables",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L12",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_data_model_observation_tables",
+      "label": "Append Only Analytics Observations",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L16",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_data_model_work_tables",
+      "label": "Work Items and Durable Queue Tables",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_data_model_migration_policy",
+      "label": "Immutable Numbered Migrations",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_permissions_authorization_policy",
+      "label": "Independent Page Authorization Policy",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_permissions_aggregate_visibility",
+      "label": "Aggregate Visibility Boundary",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L22",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_permissions_media_boundary",
+      "label": "Private Media Purpose Boundary",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_permissions_active_session",
+      "label": "Active Session Enforcement",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_operations_task_contract",
+      "label": "Task Occurrence API Contract",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_operations_analytics_contract",
+      "label": "Analytics Snapshot API Contract",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_operations_weekly_contract",
+      "label": "Weekly Reporting API Contract",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_operations_today_contract",
+      "label": "Today Operational API Contract",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_operations_report_contract",
+      "label": "Authorized Report Dataset Contract",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_operations_push_contract",
+      "label": "Worker Lease and Push Delivery Contract",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L44",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_sources_sources",
+      "label": "Official Technical Reference Policy",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_sources_postgres_docs",
+      "label": "PostgreSQL Locking References",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L10",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_sources_docker_docs",
+      "label": "Docker Runtime References",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L12",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_sources_browser_docs",
+      "label": "Browser Push and PWA References",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_graphify_map_outputs",
+      "label": "Generated Project Map Outputs",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_graphify_safe_rebuild",
+      "label": "Source Allowlist Rebuild",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_graphify_semantic_review",
+      "label": "Hash Gated Semantic Review",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_graphify_query",
+      "label": "Graphify Query Navigation",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L47",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "web_index_browser_entry",
+      "label": "Persian RTL Browser Entry",
+      "file_type": "concept",
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/web/index.html",
+      "source_location": "L1",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -592,7 +911,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -602,7 +921,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -612,7 +931,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -622,7 +941,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -632,7 +951,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -642,7 +961,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -652,7 +971,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -662,7 +981,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -672,7 +991,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -682,7 +1001,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -692,7 +1011,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -702,7 +1021,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -712,7 +1031,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -722,7 +1041,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -732,7 +1051,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -742,7 +1061,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -752,7 +1071,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -762,7 +1081,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -772,7 +1091,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -782,7 +1101,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -792,7 +1111,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -802,7 +1121,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -812,7 +1131,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:109",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -822,7 +1141,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:376",
+      "source_location": "L376",
       "weight": 1.0
     },
     {
@@ -832,7 +1151,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:376",
+      "source_location": "L376",
       "weight": 1.0
     },
     {
@@ -842,7 +1161,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:376",
+      "source_location": "L376",
       "weight": 1.0
     },
     {
@@ -852,7 +1171,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L634",
       "weight": 1.0
     },
     {
@@ -862,7 +1181,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L634",
       "weight": 1.0
     },
     {
@@ -872,7 +1191,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:668",
+      "source_location": "L668",
       "weight": 1.0
     },
     {
@@ -882,7 +1201,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L708",
       "weight": 1.0
     },
     {
@@ -892,7 +1211,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L708",
       "weight": 1.0
     },
     {
@@ -902,7 +1221,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1",
+      "source_location": "L708",
       "weight": 1.0
     },
     {
@@ -912,7 +1231,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:539",
+      "source_location": "L539",
       "weight": 1.0
     },
     {
@@ -922,7 +1241,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:748",
+      "source_location": "L748",
       "weight": 1.0
     },
     {
@@ -932,7 +1251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:748",
+      "source_location": "L748",
       "weight": 1.0
     },
     {
@@ -942,7 +1261,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:748",
+      "source_location": "L748",
       "weight": 1.0
     },
     {
@@ -952,7 +1271,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:804",
+      "source_location": "L804",
       "weight": 1.0
     },
     {
@@ -962,7 +1281,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:843",
+      "source_location": "L843",
       "weight": 1.0
     },
     {
@@ -972,7 +1291,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:932",
+      "source_location": "L932",
       "weight": 1.0
     },
     {
@@ -982,7 +1301,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:932",
+      "source_location": "L932",
       "weight": 1.0
     },
     {
@@ -992,7 +1311,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:957",
+      "source_location": "L957",
       "weight": 1.0
     },
     {
@@ -1002,7 +1321,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:957",
+      "source_location": "L957",
       "weight": 1.0
     },
     {
@@ -1012,7 +1331,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1001",
+      "source_location": "L1001",
       "weight": 1.0
     },
     {
@@ -1022,7 +1341,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1001",
+      "source_location": "L1001",
       "weight": 1.0
     },
     {
@@ -1032,7 +1351,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1001",
+      "source_location": "L1001",
       "weight": 1.0
     },
     {
@@ -1042,7 +1361,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1120",
+      "source_location": "L1120",
       "weight": 1.0
     },
     {
@@ -1052,7 +1371,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:197",
+      "source_location": "L197",
       "weight": 1.0
     },
     {
@@ -1062,7 +1381,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1201",
+      "source_location": "L1201",
       "weight": 1.0
     },
     {
@@ -1072,7 +1391,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1201",
+      "source_location": "L1201",
       "weight": 1.0
     },
     {
@@ -1082,7 +1401,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1201",
+      "source_location": "L1201",
       "weight": 1.0
     },
     {
@@ -1092,7 +1411,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PRODUCT_SPEC.md",
-      "source_location": "docs/PRODUCT_SPEC.md:1201",
+      "source_location": "L1201",
       "weight": 1.0
     },
     {
@@ -1102,7 +1421,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:5",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -1112,7 +1431,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:5",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -1122,7 +1441,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:5",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -1132,7 +1451,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:9",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -1142,7 +1461,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:10",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -1152,7 +1471,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:11",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -1162,7 +1481,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:8",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -1172,7 +1491,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:12",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -1182,7 +1501,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1192,7 +1511,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1202,7 +1521,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1212,7 +1531,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1222,7 +1541,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1232,7 +1551,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1242,7 +1561,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1252,7 +1571,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:16",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -1262,7 +1581,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:18",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -1272,7 +1591,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:20",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -1282,7 +1601,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:22",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -1292,7 +1611,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:23",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -1302,7 +1621,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_CONTRACT.md",
-      "source_location": "docs/API_CONTRACT.md:17",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -1312,7 +1631,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1322,7 +1641,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1332,7 +1651,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1342,7 +1661,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1352,7 +1671,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1362,7 +1681,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1372,7 +1691,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1382,7 +1701,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:17",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -1392,7 +1711,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:18",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -1402,7 +1721,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:16",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -1412,7 +1731,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/IMPLEMENTATION_PLAN.md",
-      "source_location": "docs/IMPLEMENTATION_PLAN.md:21",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -1422,7 +1741,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PROGRESS.md",
-      "source_location": "docs/PROGRESS.md:3",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -1432,7 +1751,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PROGRESS.md",
-      "source_location": "docs/PROGRESS.md:13",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -1442,7 +1761,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.85,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:9",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -1452,7 +1771,407 @@
       "confidence": "INFERRED",
       "confidence_score": 0.85,
       "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DECISIONS.md",
-      "source_location": "docs/DECISIONS.md:6",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_runtime",
+      "target": "docs_decisions_monolith",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_runtime",
+      "target": "docs_product_spec_private_media",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_runtime",
+      "target": "docs_decisions_jobs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_workflow_boundaries",
+      "target": "docs_product_spec_content_revisions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_workflow_boundaries",
+      "target": "docs_product_spec_schedules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_worker_recovery",
+      "target": "docs_decisions_jobs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_worker_recovery",
+      "target": "docs_product_spec_reminders",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_deployment_boundaries",
+      "target": "docs_product_spec_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_architecture_deployment_boundaries",
+      "target": "docs_product_spec_permissions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/ARCHITECTURE.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_schema",
+      "target": "docs_data_model_revision_tables",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_schema",
+      "target": "docs_data_model_schedule_tables",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_schema",
+      "target": "docs_data_model_observation_tables",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_schema",
+      "target": "docs_data_model_work_tables",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_schema",
+      "target": "docs_data_model_migration_policy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_revision_tables",
+      "target": "docs_product_spec_content_revisions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_schedule_tables",
+      "target": "docs_product_spec_schedules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_observation_tables",
+      "target": "docs_product_spec_analytics",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_data_model_work_tables",
+      "target": "docs_decisions_jobs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/DATA_MODEL.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_permissions_authorization_policy",
+      "target": "docs_product_spec_permissions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_permissions_aggregate_visibility",
+      "target": "docs_product_spec_reports",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_permissions_media_boundary",
+      "target": "docs_product_spec_private_media",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_permissions_active_session",
+      "target": "docs_product_spec_authentication",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/PERMISSIONS.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_task_contract",
+      "target": "docs_product_spec_tasks",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_analytics_contract",
+      "target": "docs_product_spec_analytics",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_weekly_contract",
+      "target": "docs_product_spec_weekly_reports",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_today_contract",
+      "target": "docs_product_spec_today",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_report_contract",
+      "target": "docs_product_spec_reports",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_push_contract",
+      "target": "docs_decisions_jobs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_operations_push_contract",
+      "target": "docs_product_spec_notifications",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/API_OPERATIONS.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_sources_sources",
+      "target": "docs_sources_postgres_docs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_sources_sources",
+      "target": "docs_sources_docker_docs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_sources_sources",
+      "target": "docs_sources_browser_docs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_sources_postgres_docs",
+      "target": "docs_decisions_schedule_lock",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_sources_docker_docs",
+      "target": "docs_product_spec_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_sources_browser_docs",
+      "target": "docs_product_spec_pwa",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/SOURCES.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_graphify_map_outputs",
+      "target": "docs_product_spec_graphify",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_graphify_safe_rebuild",
+      "target": "docs_decisions_safe_graph",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_graphify_semantic_review",
+      "target": "docs_graphify_map_outputs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_graphify_query",
+      "target": "docs_graphify_map_outputs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/docs/GRAPHIFY.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "web_index_browser_entry",
+      "target": "docs_product_spec_themes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/roodin/Documents/Projects/insta-content/web/index.html",
+      "source_location": "L1",
       "weight": 1.0
     }
   ],
@@ -1464,7 +2183,14 @@
     "docs/DECISIONS.md": "7198cd6c873d9a384a6e98c31065d7d997ab99bc330b18b2caa5f92fada0200b",
     "docs/API_CONTRACT.md": "e746fd888450efdb5331b1d6ff9568b258852289148a01ce69a7d135ca172dc2",
     "docs/IMPLEMENTATION_PLAN.md": "dc99f62345d1db65f39e0b0f9a85eb89315a4c430db9f77db58589a194646035",
-    "docs/PROGRESS.md": "35626d3227a75c6d062a150865222840b9fb0425d0e7cf3d08647813d998a1cd"
+    "docs/PROGRESS.md": "35626d3227a75c6d062a150865222840b9fb0425d0e7cf3d08647813d998a1cd",
+    "docs/ARCHITECTURE.md": "e61474904c1c2aa8ea8932d8c83be3a668eef53227c7d8a356effc7d11c1fab9",
+    "docs/DATA_MODEL.md": "67bd3772f56c589f370c5c114c27ba90e05da1225236ee18197ef5501337cd7e",
+    "docs/PERMISSIONS.md": "315f9c4f12caf55a8fedfbb6388a49b148b6ecb7e5fee668066c3413e91250d5",
+    "docs/API_OPERATIONS.md": "40c774e259e49a9aab0c8f03dcf28e103da29b42d11d88b7d60f5efe730e7be4",
+    "docs/SOURCES.md": "60d638907ef1e1677922f436097fed2076b4c9f14de9d909bf7adc0800ebd36c",
+    "docs/GRAPHIFY.md": "cfd110040341a51a3d8d3e9a0e9d455168ca1e58883a56e324b8db7cf99fa880",
+    "web/index.html": "ec567987a7af3a039fd0867d3d84626712f3aadb332a02e83315b51649b65aa0"
   },
   "provenance": {
     "method": "delegated host-agent review",

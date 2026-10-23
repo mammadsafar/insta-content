@@ -1,15 +1,16 @@
 import type {FastifyInstance} from 'fastify';
 import {z} from 'zod';
 import {one,query,transaction} from '../core/db.js';
-import {HttpError,requireUser,requireOwner,authorize,audit} from '../core/security.js';
+import {HttpError,requireUser,requireOwner,authorize,audit,notify} from '../core/security.js';
 import {idSchema,dateSchema,timeSchema,revisionSchema,isStory,lockPage,lockContent,checkRevision,validateAssets,invalidatePackage,requireApproval,recordPublication,refreshPackageSignature,notifyOwner} from './content-core.js';
 
 const typeSchema=z.enum(['reel','image','image_carousel','video_carousel','mixed_carousel','image_story','video_story']);
 const text=z.string().max(20000);
-const fields={type:typeSchema.optional(),title:text.optional(),caption:text.optional(),topic:z.string().max(200).optional(),scenario:text.optional(),hook:text.optional(),description:text.optional(),cta:text.optional(),assets:z.array(idSchema).max(30).optional(),coverId:idSchema.nullable().optional(),music:z.object({mode:z.enum(['embedded','instagram','none']).optional(),audioId:idSchema.nullable().optional(),url:z.url().max(2000).optional(),trackName:text.optional(),notes:text.optional(),offsetSeconds:z.number().nonnegative().optional(),volume:text.optional()}).strict().nullable().optional(),packageId:idSchema.nullable().optional(),packagePosition:z.number().int().positive().optional(),scheduledDate:dateSchema.nullable().optional(),scheduledOrder:z.number().int().min(1).max(1000).optional(),scheduledTime:timeSchema.nullable().optional()};
+const webUrl=z.url({protocol:/^https?$/}).max(2000);
+const fields={type:typeSchema.optional(),title:text.optional(),caption:text.optional(),topic:z.string().max(200).optional(),scenario:text.optional(),hook:text.optional(),description:text.optional(),cta:text.optional(),assets:z.array(idSchema).max(30).optional(),coverId:idSchema.nullable().optional(),music:z.object({mode:z.enum(['embedded','instagram','none']).optional(),audioId:idSchema.nullable().optional(),url:webUrl.optional(),trackName:text.optional(),notes:text.optional(),offsetSeconds:z.number().nonnegative().optional(),volume:text.optional()}).strict().nullable().optional(),packageId:idSchema.nullable().optional(),packagePosition:z.number().int().positive().optional(),scheduledDate:dateSchema.nullable().optional(),scheduledOrder:z.number().int().min(1).max(1000).optional(),scheduledTime:timeSchema.nullable().optional()};
 const outputKeys=['title','caption','topic','scenario','hook','description','cta','assets','coverId','music'];
 const patchSchema=z.object({...fields,expectedRevision:z.number().int().positive(),followupUserId:idSchema.optional()}).strict();
-const publicationSchema=revisionSchema.extend({url:z.url().max(2000).optional()}).strict();
+const publicationSchema=revisionSchema.extend({url:webUrl.optional()}).strict();
 function jsonEqual(a:unknown,b:unknown):boolean {
   if(a===b)return true;
   if(!a||!b||typeof a!=='object'||typeof b!=='object')return false;
@@ -51,7 +52,11 @@ export async function registerContent(app:FastifyInstance) {
     const filters=z.object({state:z.enum(['draft','awaiting_approval','changes_required','approved','published']).optional(),kind:z.enum(['post','story']).optional(),trash:z.enum(['1','true','0','false']).optional()}).parse(req.query);
     return {data:await query(`SELECT c.*,s.date AS scheduled_date,s.position AS scheduled_order,s.time AS scheduled_time,
       (SELECT count(*)::int FROM feedback f WHERE f.content_id=c.id AND NOT f.resolved) AS open_feedback_count,
-      (SELECT count(*)::int FROM analytics_snapshots a WHERE a.content_id=c.id AND finalized) AS analytics_count
+      (SELECT count(*)::int FROM analytics_snapshots a WHERE a.content_id=c.id AND finalized) AS analytics_count,
+      EXISTS(SELECT 1 FROM analytics_snapshots a WHERE a.content_id=c.id AND a.checkpoint='first_hour' AND a.finalized) AS first_hour_completed,
+      EXISTS(SELECT 1 FROM analytics_snapshots a WHERE a.content_id=c.id AND a.checkpoint='next_day' AND a.finalized) AS next_day_completed,
+      (SELECT mime_type FROM assets WHERE id=COALESCE(c.data->>'coverId',c.data->'assets'->>0)::uuid) AS lead_asset_mime,
+      EXISTS(SELECT 1 FROM assets WHERE id=COALESCE(c.data->>'coverId',c.data->'assets'->>0)::uuid AND thumbnail_key IS NOT NULL) AS lead_asset_has_thumbnail
       FROM content c LEFT JOIN schedule_slots s ON s.content_id=c.id WHERE c.page_id=$1
       AND ($2::text IS NULL OR c.state=$2) AND ($3::text IS NULL OR CASE WHEN $3='story' THEN c.type LIKE '%_story' ELSE c.type NOT LIKE '%_story' END)
       AND ((c.trashed_at IS NOT NULL)=$4) ORDER BY s.date NULLS LAST,s.position,c.created_at DESC`,[pageId,filters.state??null,filters.kind??null,['1','true'].includes(filters.trash??'')])};
@@ -89,10 +94,11 @@ export async function registerContent(app:FastifyInstance) {
         requireOwner(user);
         if(!(await client.query('SELECT id FROM users WHERE id=$1 AND active',[body.followupUserId])).rows.length)throw new HttpError(422,'مسئول پیگیری معتبر نیست.');
         await client.query('UPDATE content SET followup_user_id=$2 WHERE id=$1',[id,body.followupUserId]);
-        await client.query('UPDATE work_items SET assignee_id=$2 WHERE content_id=$1 AND completed_at IS NULL',[id,body.followupUserId]);
+        if(body.followupUserId!==row.followup_user_id)await notify(client,body.followupUserId,'content_assignment','پیگیری آماده‌سازی این محتوا به شما واگذار شد.',{contentId:id,pageId:row.page_id,href:`/content/${id}`},user.id);
         await audit(client,user.id,'content.assign','content',id,{assigneeId:body.followupUserId});
       }
       const type=body.type??row.type,packageId=body.packageId===undefined?row.package_id:body.packageId;
+      if(isStory(type)!==isStory(row.type))throw new HttpError(422,'برای تبدیل پست به استوری یا برعکس، محتوای تازه بسازید.');
       const packagePosition=body.packagePosition??row.package_position;
       await assignPackage(client,row.page_id,type,packageId,packagePosition,id);
       const data={...row.data,...Object.fromEntries(outputKeys.filter(k=>(body as any)[k]!==undefined).map(k=>[k,(body as any)[k]]))};
@@ -129,7 +135,11 @@ export async function registerContent(app:FastifyInstance) {
       const state=action==='submit'?'awaiting_approval':action==='approve'?'approved':'changes_required';
       const result=(await client.query('UPDATE content SET state=$2,approved_revision=$3,approved_by=$4,approved_at=$5,claim_user_id=NULL,claim_revision=NULL,claimed_at=NULL,updated_at=now() WHERE id=$1 RETURNING *',[id,state,action==='approve'?row.revision:null,action==='approve'?user.id:null,action==='approve'?new Date():null])).rows[0];
       await audit(client,user.id,`content.${action}`,'content',id,{revision:row.revision,reason:body.reason});
-      if(action==='submit')await notifyOwner(client,user.id,'approval','محتوای تازه در انتظار تأیید است.',{contentId:id,pageId:row.page_id},`approval:${id}:${row.revision}`);
+      if(action==='submit')await notifyOwner(client,user.id,'approval',row.revision>1?'نسخهٔ اصلاح‌شده دوباره برای تأیید ارسال شد.':'محتوای تازه در انتظار تأیید است.',{contentId:id,pageId:row.page_id},`approval:${id}:${row.revision}`);
+      else {
+        const participants=new Set<string>([row.creator_id,row.followup_user_id]);
+        for(const recipient of participants)if(recipient!==user.id)await notify(client,recipient,action==='approve'?'content_approved':'changes_required',action==='approve'?'این نسخه برای انتشار تأیید شد.':'مالک برای این محتوا اصلاحات الزامی درخواست کرد.',{contentId:id,pageId:row.page_id,href:`/content/${id}`},user.id,`${action}:${id}:${row.revision}:${recipient}:${result.updated_at.toISOString()}`);
+      }
       return result;
     })};
   });
@@ -138,11 +148,14 @@ export async function registerContent(app:FastifyInstance) {
     const body=z.object({text:z.string().trim().max(10000).optional(),audioId:idSchema.optional(),assetId:idSchema.optional(),offsetSeconds:z.number().nonnegative().max(86400).optional(),parentId:idSchema.optional()}).strict().refine(x=>Boolean(x.text||x.audioId),'متن یا فایل صوتی لازم است.').parse(req.body);
     return {data:await transaction(async client=>{
       const row=await lockContent(client,id);authorize(user,row.page_id,'suggest');
-      if(body.audioId&&!(await client.query("SELECT id FROM assets WHERE id=$1 AND page_id=$2 AND purpose='feedback' AND completed",[body.audioId,row.page_id])).rows.length)throw new HttpError(422,'فایل صوتی معتبر نیست.');
+      if(body.audioId&&!(await client.query("SELECT id FROM assets WHERE id=$1 AND page_id=$2 AND purpose='feedback' AND completed FOR SHARE",[body.audioId,row.page_id])).rows.length)throw new HttpError(422,'فایل صوتی معتبر نیست.');
       if(body.assetId&&!(row.data.assets??[]).includes(body.assetId))throw new HttpError(422,'فایل انتخاب‌شده در این نسخه نیست.');
       if(body.parentId&&!(await client.query('SELECT id FROM feedback WHERE id=$1 AND content_id=$2 AND revision=$3',[body.parentId,id,row.revision])).rows.length)throw new HttpError(422,'بازخورد والد مربوط به این نسخه نیست.');
       const result=(await client.query('INSERT INTO feedback(content_id,revision,author_id,text,audio_id,asset_id,offset_seconds,parent_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[id,row.revision,user.id,body.text??null,body.audioId??null,body.assetId??null,body.offsetSeconds??null,body.parentId??null])).rows[0];
-      await audit(client,user.id,'feedback.create','content',id,{feedbackId:result.id,revision:row.revision});return result;
+      await audit(client,user.id,'feedback.create','content',id,{feedbackId:result.id,revision:row.revision});
+      await notifyOwner(client,user.id,'feedback','پیشنهاد اصلاح تازه‌ای برای محتوا ثبت شد.',{contentId:id,pageId:row.page_id},`feedback:${id}:${row.revision}`);
+      for(const recipient of new Set<string>([row.creator_id,row.followup_user_id]))if(recipient!==user.id)await notify(client,recipient,'feedback','پیشنهاد اصلاح تازه‌ای برای محتوا ثبت شد.',{contentId:id,pageId:row.page_id,href:`/content/${id}`},user.id,`feedback:${id}:${row.revision}:${recipient}`);
+      return result;
     })};
   });
   app.patch('/api/feedback/:id',async req=>{
@@ -173,7 +186,7 @@ export async function registerContent(app:FastifyInstance) {
     })};
   });
   app.patch('/api/content/:id/publication-url',async req=>{
-    const user=requireUser(req),id=idSchema.parse((req.params as any).id),{url}=z.object({url:z.url().max(2000)}).strict().parse(req.body);
+    const user=requireUser(req),id=idSchema.parse((req.params as any).id),{url}=z.object({url:webUrl}).strict().parse(req.body);
     return {data:await transaction(async client=>{
       const row=await lockContent(client,id);if(!row.published_at)throw new HttpError(409,'ابتدا انتشار را ثبت کنید.');
       await audit(client,user.id,'publication.url','content',id,{from:row.publication_url,to:url});

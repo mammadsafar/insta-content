@@ -2,7 +2,7 @@ import type {FastifyInstance} from 'fastify';
 import type {PoolClient} from 'pg';
 import {z} from 'zod';
 import {one,query,transaction} from '../core/db.js';
-import {HttpError,requireUser,audit} from '../core/security.js';
+import {HttpError,requireUser,audit,can} from '../core/security.js';
 import {addDays} from '../core/time.js';
 
 const general=['views','firstHourViews','nextDayViews','viewers','reach','likes','comments','shares','reposts','saves','followersGained','profileVisits','leads','directMessages','orders','attributedSales','salesAttributionNotes'];
@@ -70,9 +70,16 @@ export async function registerAnalytics(app:FastifyInstance):Promise<void>{
   });
   app.get('/api/pages/:pageId/weekly-reports',async req=>{
     const user=requireUser(req),id=z.object({pageId:z.uuid()}).parse(req.params).pageId;
-    // Entry permission is available to every active member; history is report-visible only.
-    const {authorize}=await import('../core/security.js');authorize(user,id,'report');
-    return {data:await query('SELECT *,period_start::text,period_end::text FROM weekly_reports WHERE page_id=$1 ORDER BY period_start DESC',[id])};
+    if(can(user,id,'report'))return {data:await query('SELECT *,period_start::text,period_end::text FROM weekly_reports WHERE page_id=$1 ORDER BY period_start DESC',[id])};
+    // Entry users can resume their own unfinished form. Other/finalized periods expose
+    // only identity/version/completion so a duplicate submission can be corrected
+    // without disclosing the page's analytical values.
+    return {data:await query(`SELECT id,page_id,period_start::text,period_end::text,finalized,version,submitted_at,
+      NOT(submitter_id=$2 AND NOT finalized) AS restricted,
+      CASE WHEN submitter_id=$2 AND NOT finalized THEN metrics ELSE '{}'::jsonb END AS metrics,
+      CASE WHEN submitter_id=$2 AND NOT finalized THEN notes ELSE '' END AS notes,
+      CASE WHEN submitter_id=$2 AND NOT finalized THEN screenshots ELSE '[]'::jsonb END AS screenshots
+      FROM weekly_reports WHERE page_id=$1 ORDER BY period_start DESC`,[id,user.id])};
   });
   app.post('/api/pages/:pageId/weekly-reports',async req=>{
     const user=requireUser(req),id=z.object({pageId:z.uuid()}).parse(req.params).pageId,b=weekly.parse(req.body);
@@ -106,6 +113,6 @@ function validateWeekly(b:z.infer<typeof weekly>){
   if(b.finalized&&!Object.hasOwn(b.metrics,'followersAtEnd'))throw new HttpError(400,'تعداد دنبال‌کنندگان پایان دوره ضروری است.');
 }
 async function screenshotsValid(c:PoolClient,pageId:string,ids:string[],userId:string){
-  if(ids.length&&(await c.query(`SELECT id FROM assets WHERE id=ANY($1::uuid[]) AND page_id=$2 AND purpose='insights' AND completed AND (uploader_id=$3 OR EXISTS(SELECT 1 FROM users WHERE id=$3 AND role='owner'))`,[ids,pageId,userId])).rowCount!==new Set(ids).size)throw new HttpError(400,'تصویر گزارش معتبر نیست.');
+  if(ids.length&&(await c.query(`SELECT id FROM assets WHERE id=ANY($1::uuid[]) AND page_id=$2 AND purpose='insights' AND completed AND (uploader_id=$3 OR EXISTS(SELECT 1 FROM users WHERE id=$3 AND role='owner')) FOR SHARE`,[ids,pageId,userId])).rowCount!==new Set(ids).size)throw new HttpError(400,'تصویر گزارش معتبر نیست.');
 }
 async function completeWeekly(c:PoolClient,pageId:string,start:string,actor:string){await c.query('UPDATE work_items SET completed_at=COALESCE(completed_at,now()),completed_by=COALESCE(completed_by,$3) WHERE page_id=$1 AND period_start=$2 AND type=\'weekly\'',[pageId,start,actor]);}

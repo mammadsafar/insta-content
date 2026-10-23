@@ -14,7 +14,7 @@ export async function registerPages(app:FastifyInstance):Promise<void>{
       const page=(await tx.query('SELECT * FROM pages WHERE id=$1 FOR UPDATE',[id])).rows[0];
       if(!page) throw new HttpError(404,'صفحه پیدا نشد.');
       if(body.reminderUserId && !(await tx.query('SELECT 1 FROM users WHERE id=$1 AND active',[body.reminderUserId])).rowCount) throw new HttpError(400,'مسئول باید عضو فعال باشد.');
-      if(body.avatarId && !(await tx.query("SELECT 1 FROM assets WHERE id=$1 AND page_id=$2 AND purpose='avatar' AND completed",[body.avatarId,id])).rowCount) throw new HttpError(400,'تصویر صفحه معتبر نیست.');
+      if(body.avatarId && !(await tx.query("SELECT 1 FROM assets WHERE id=$1 AND page_id=$2 AND purpose='avatar' AND completed FOR SHARE",[body.avatarId,id])).rowCount) throw new HttpError(400,'تصویر صفحه معتبر نیست.');
       const updated=(await tx.query('UPDATE pages SET name=$2,username=$3,avatar_id=$4,reminder_user_id=$5,settings=$6 WHERE id=$1 RETURNING *',[id,body.name??page.name,body.username??page.username,body.avatarId===undefined?page.avatar_id:body.avatarId,body.reminderUserId===undefined?page.reminder_user_id:body.reminderUserId,JSON.stringify({...page.settings,...body.settings})])).rows[0];
       if(body.reminderUserId!==undefined) await tx.query('UPDATE work_items SET assignee_id=$2 WHERE page_id=$1 AND completed_at IS NULL',[id,body.reminderUserId]);
       await audit(tx,user.id,'update_page','page',id,body);return updated;

@@ -23,9 +23,9 @@ docker compose -f compose.local.yml up -d app worker
 docker compose -f compose.local.yml ps
 ```
 
-Open <http://localhost:3000>. Bootstrap asks for owner name, email, and a hidden password of at least 12 characters. It creates exactly two empty pages with two required daily post slots per page. Names, usernames, reminders, and settings are configurable. It refuses to replace an existing owner. No default password, demo content, or synthetic metrics are loaded.
+Open <http://localhost:3001>. Bootstrap asks for owner name, email, and a hidden password of at least 12 characters. It creates exactly two empty pages with two required daily post slots per page. Names, usernames, reminders, and settings are configurable. It refuses to replace an existing owner. No default password, demo content, or synthetic metrics are loaded.
 
-Both Compose files stand alone. Local exposes only `127.0.0.1:3000`; PostgreSQL has no host port. Database and media use persistent named volumes. `docker compose down` retains them; **`down -v` destroys them**.
+Both Compose files stand alone. Local exposes only `127.0.0.1:3001`; PostgreSQL has no host port. Database and media use persistent named volumes. `docker compose down` retains them; **`down -v` destroys them**.
 
 ## Development and verification
 
@@ -34,9 +34,11 @@ The default local workflow runs the same production artifact as deployment. Ther
 ```sh
 npm ci
 npm run check
-npm test
+npm run test:unit
+# Full integration suite: set DATABASE_URL to an isolated database ending in _test.
+DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/rooz_test npm test
 npm run build
-npm run test:e2e
+E2E_BASE_URL=http://localhost:3001 E2E_EMAIL=TEST_EMAIL E2E_PASSWORD=TEST_PASSWORD npm run test:e2e
 ```
 
 Database integration tests require an isolated test database; see the test fixtures before setting `DATABASE_URL`. Never run integration fixtures against production. Tests must actually pass before a feature is described as verified. Current evidence and incomplete work are recorded in [acceptance criteria](docs/ACCEPTANCE_CRITERIA.md) and [progress](docs/PROGRESS.md).
@@ -50,3 +52,7 @@ Use [deployment instructions](docs/DEPLOYMENT.md) for the independent `compose.p
 - [Authoritative product specification](docs/PRODUCT_SPEC.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), [decisions](docs/DECISIONS.md), [acceptance mapping](docs/ACCEPTANCE_CRITERIA.md), [progress](docs/PROGRESS.md).
 - [Architecture](docs/ARCHITECTURE.md), [data model](docs/DATA_MODEL.md), [permissions](docs/PERMISSIONS.md), [API contract](docs/API_CONTRACT.md), [official sources](docs/SOURCES.md).
 - Graphify-generated project maps are preserved under [`graphify-out/`](graphify-out/). Consult `docs/PROGRESS.md` for the exact generation status and outputs; directory existence alone is not proof of successful generation.
+
+## Execution preferences
+
+The operator runs installation, Docker builds/startup and deployment commands. No default admin credentials exist: run migration and the interactive owner bootstrap above. No production deployment or Git commit has been performed.

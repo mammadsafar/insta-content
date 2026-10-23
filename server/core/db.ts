@@ -10,7 +10,7 @@ export const pool = new pg.Pool({
   connectionTimeoutMillis: 10_000,
   idleTimeoutMillis: 30_000,
 });
-pool.on('error', (error) => console.error('Database connection error', error.code));
+pool.on('error', (error) => console.error('Database connection error', error.name));
 
 export async function query<T extends QueryResultRow = any>(text: string, values: any[] = []): Promise<T[]> {
   return (await pool.query<T>(text, values)).rows;

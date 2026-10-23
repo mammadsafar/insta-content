@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { mkdtemp, rm, readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import Fastify from 'fastify';
+import Fastify, {type FastifyRequest,type FastifyReply} from 'fastify';
+import sharp from 'sharp';
 import multipart from '@fastify/multipart';
 import { randomUUID } from 'node:crypto';
 import { pool, query } from '../server/core/db.js';
@@ -14,7 +15,7 @@ import type { User } from '../server/core/security.js';
 const enabled = !!process.env.DATABASE_URL;
 let app: ReturnType<typeof Fastify>, root: string;
 const ids = { owner: randomUUID(), editor: randomUUID(), viewer: randomUUID(), page: randomUUID(), content: randomUUID() };
-const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j1ioAAAAASUVORK5CYII=', 'base64');
+const png = await sharp({create:{width:1,height:1,channels:3,background:'white'}}).png().toBuffer();
 function body(bytes = png, filename = 'عکس.png', mime = 'image/png') {
   return Buffer.concat([Buffer.from(`--test-boundary\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: ${mime}\r\n\r\n`), bytes, Buffer.from('\r\n--test-boundary--\r\n')]);
 }
@@ -22,18 +23,18 @@ function headers(user = 'editor') { return { 'x-test-user': user, 'content-type'
 before(async () => {
   if (!enabled) return;
   root = await mkdtemp(join(tmpdir(), 'rooz-media-routes-'));
-  process.env.MEDIA_DIR = root;
+  process.env.MEDIA_ROOT = root;
   await query("INSERT INTO users(id,name,email,password_hash,role) VALUES ($1,'media owner',$2,'test','owner') ON CONFLICT(role) WHERE role='owner' DO NOTHING", [ids.owner, `${ids.owner}@test.invalid`]);
   const owners = await query("SELECT id FROM users WHERE role='owner'"); ids.owner = owners[0].id;
   for (const name of ['editor', 'viewer'] as const) await query("INSERT INTO users(id,name,email,password_hash) VALUES ($1,$2,$3,'test')", [ids[name], name, `${ids[name]}@test.invalid`]);
   await query("INSERT INTO pages(id,name) VALUES ($1,'media tests')", [ids.page]);
   app = Fastify();
   await app.register(multipart);
-  app.addHook('onRequest', async req => {
+  app.addHook('onRequest', async (req:FastifyRequest) => {
     const name = req.headers['x-test-user'] as 'owner' | 'editor' | 'viewer';
     req.user = name && ids[name] ? { id: ids[name], name, email: '', role: name === 'owner' ? 'owner' : 'member', active: true, theme: 'system', permissions: [{ page_id: ids.page, can_edit: name === 'editor', can_suggest: name === 'editor', can_report: false }] } satisfies User : null;
   });
-  app.setErrorHandler((err: any, _req, reply) => reply.code(err.statusCode || 500).send({ error: err.message }));
+  app.setErrorHandler((err: any, _req:FastifyRequest, reply:FastifyReply) => reply.code(err.statusCode || 500).send({ error: err.message }));
   await registerMedia(app);
 });
 after(async () => {

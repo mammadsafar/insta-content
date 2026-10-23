@@ -25,10 +25,10 @@ test('production Compose independently validates, isolates PostgreSQL, and publi
   }
   assert.equal(config.networks.proxy.external, true);
   assert.equal(config.networks.private.internal, true);
-  assert.ok(config.services.app.networks.proxy);
+  assert.ok(Object.hasOwn(config.services.app.networks,'proxy'));
   assert.equal(config.services.db.networks.proxy, undefined);
   assert.equal(config.services.worker.networks.proxy, undefined);
-  assert.ok(config.services.worker.networks.egress, 'Web Push needs outbound HTTPS');
+  assert.ok(Object.hasOwn(config.services.worker.networks,'egress'), 'Web Push needs outbound HTTPS');
   assert.ok(config.services.db.volumes.some((v: any) => v.type === 'volume'));
   assert.ok(config.services.app.volumes.some((v: any) => v.target === '/app/media'));
   assert.ok(config.services.worker.volumes.some((v: any) => v.target === '/app/media'));

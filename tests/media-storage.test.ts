@@ -4,9 +4,10 @@ import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
+import sharp from 'sharp';
 import { safeFilename, parseRange, storeUpload, storagePath, removeStoredFiles } from '../server/core/storage.js';
 
-const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j1ioAAAAASUVORK5CYII=', 'base64');
+const png = await sharp({create:{width:1,height:1,channels:3,background:'white'}}).png().toBuffer();
 
 test('filenames cannot inject headers, path traversal, or shell filenames', () => {
   assert.equal(safeFilename('../../evil\r\nname.png'), 'evilname.png');

@@ -27,7 +27,7 @@ export function checkRevision(content:any,expected:number,allowPublished=false) 
 export async function validateAssets(client:PoolClient,pageId:string,type:string,data:any,complete:boolean) {
   const refs=[...(data.assets??[]).map((id:string)=>({id,purpose:'content'})),...(data.coverId?[{id:data.coverId,purpose:'content'}]:[]),...(data.music?.audioId?[{id:data.music.audioId,purpose:'music'}]:[])];
   if(complete&&!(data.assets?.length)) throw new HttpError(422,'برای ارسال تأیید، فایل نهایی را اضافه کنید.');
-  const rows=refs.length?(await client.query('SELECT * FROM assets WHERE id=ANY($1::uuid[])',[refs.map(x=>x.id)])).rows:[];
+  const rows=refs.length?(await client.query('SELECT * FROM assets WHERE id=ANY($1::uuid[]) FOR SHARE',[refs.map(x=>x.id)])).rows:[];
   for(const ref of refs) {
     const row=rows.find(x=>x.id===ref.id);
     if(!row||row.page_id!==pageId||row.purpose!==ref.purpose||!row.completed) throw new HttpError(422,'فایل نامعتبر است یا بارگذاری آن کامل نشده است.');
@@ -51,7 +51,8 @@ export async function requireApproval(client:PoolClient,content:any) {
   if(content.state!=='approved'||content.approved_revision!==content.revision) throw new HttpError(409,'این نسخه هنوز تأیید نشده است.');
   if(content.package_id) {
     const pkg=(await client.query('SELECT * FROM story_packages WHERE id=$1',[content.package_id])).rows[0];
-    if(!pkg?.approved_signature||JSON.stringify(pkg.approved_signature)!==JSON.stringify(await packageSignature(client,pkg.id))) throw new HttpError(409,'ترتیب یا نسخهٔ استوری‌ها تغییر کرده است؛ تأیید دوبارهٔ بسته لازم است.');
+    const signature=(items:any[])=>items.map(x=>`${x.id}:${x.revision}:${x.package_position}`).join('|');
+    if(!pkg?.approved_signature||signature(pkg.approved_signature)!==signature(await packageSignature(client,pkg.id))) throw new HttpError(409,'ترتیب یا نسخهٔ استوری‌ها تغییر کرده است؛ تأیید دوبارهٔ بسته لازم است.');
   }
 }
 export async function refreshPackageSignature(client:PoolClient,packageId:string|null) {
@@ -65,12 +66,13 @@ export async function recordPublication(client:PoolClient,content:any,userId:str
     const dueAt=checkpoint==='first_hour'?new Date(at.getTime()+3600000):nextDayReminder(at,page.settings.nextDayReminderTime);
     const dedupe=`analytics:${content.id}:${checkpoint}`;
     await client.query("INSERT INTO jobs(dedupe_key,type,payload,run_at) VALUES ($1,'analytics_reminder',$2,$3) ON CONFLICT(dedupe_key) DO NOTHING",[dedupe,{contentId:content.id,pageId:content.page_id,checkpoint},dueAt]);
-    await client.query("INSERT INTO work_items(dedupe_key,type,page_id,content_id,checkpoint,assignee_id,due_at) VALUES ($1,'analytics',$2,$3,$4,$5,$6) ON CONFLICT(dedupe_key) DO NOTHING",[dedupe,content.page_id,content.id,checkpoint,content.followup_user_id,dueAt]);
+    await client.query("INSERT INTO work_items(dedupe_key,type,page_id,content_id,checkpoint,assignee_id,due_at) VALUES ($1,'analytics',$2,$3,$4,$5,$6) ON CONFLICT(dedupe_key) DO NOTHING",[dedupe,content.page_id,content.id,checkpoint,page.reminder_user_id??null,dueAt]);
   }
   await audit(client,userId,'content.publish','content',content.id,{revision:content.revision,publishedAt:at.toISOString()});
   return row;
 }
 export async function notifyOwner(client:PoolClient,actorId:string,type:string,title:string,target:any,dedupe?:string) {
   const owners=(await client.query("SELECT id FROM users WHERE role='owner' AND active")).rows;
-  for(const owner of owners) await notify(client,owner.id,type,title,target,actorId,dedupe?`${dedupe}:${owner.id}`:undefined);
+  const href=target.contentId?`/content/${target.contentId}`:target.pageId?`/pages/${target.pageId}`:'/today';
+  for(const owner of owners) await notify(client,owner.id,type,title,{...target,href},actorId,dedupe?`${dedupe}:${owner.id}`:undefined);
 }

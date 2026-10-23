@@ -6,6 +6,13 @@
       "output_tokens": 0,
       "files": 33,
       "note": "Host agent usage unavailable; no external API extraction calls"
+    },
+    {
+      "date": "2026-10-22T10:36:12.447099+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 48,
+      "note": "Host agent usage unavailable; no external API extraction calls"
     }
   ],
   "total_input_tokens": 0,

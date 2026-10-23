@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import shutil
@@ -135,6 +136,7 @@ def main() -> None:
                       {"input": 0, "output": 0}, str(ROOT), suggested_questions=questions)
     health = diagnose_extraction(extraction, directed=True, root=str(ROOT))
     health_text = format_diagnostic_report(health)
+    sql_available = importlib.util.find_spec("tree_sitter_sql") is not None
     coverage = ("\n\n## Extraction provenance and coverage\n\n"
                 "Generated with the installed Graphify library. Code uses its deterministic AST extractor; "
                 "documentation semantics were reviewed by a delegated host agent. "
@@ -144,6 +146,8 @@ def main() -> None:
                 f"Reviewed current documents: {len(reviewed)}. Unreviewed/stale documents: {len(unreviewed)}.\n\n"
                 "Unreviewed documents: " + (", ".join(f"`{name}`" for name in unreviewed) or "None") + ".\n\n"
                 "SQL, CSS, and HTML may not produce symbols in the installed AST extractor. "
+                + ("The SQL parser is available. " if sql_available else
+                   "SQL parsing is unavailable: installed dependency `tree_sitter_sql` is missing; no installation was attempted. ") +
                 "The graph maps source relationships and requirements; it is not proof that features work.\n\n"
                 "### Graph health\n\n```text\n" + health_text + "\n```\n")
     (OUT / "GRAPH_REPORT.md").write_text(report + coverage, encoding="utf-8")
@@ -155,6 +159,7 @@ def main() -> None:
                                 "inputs": [str(f.relative_to(ROOT)) for f in files],
                                 "reviewed_documents": reviewed, "unreviewed_documents": unreviewed,
                                 "ast_nodes": len(ast["nodes"]), "semantic_nodes": len(semantic["nodes"]),
+                                "sql_parser_available": sql_available,
                                 "source_hashes": {str(f.relative_to(ROOT)): hashlib.sha256(f.read_bytes()).hexdigest() for f in files},
                                 "semantic_token_usage": "unavailable; no external provider calls"})
     # Keep only successful semantic documents stamped; stale ones must requeue.

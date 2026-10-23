@@ -6,6 +6,7 @@ dist/
 !.env.production.example
 data/
 media/
+var/
 backups/
 coverage/
 test-results/

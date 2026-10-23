@@ -4,20 +4,40 @@ import {pool,query,transaction} from './core/db.js';
 import {notify} from './core/security.js';
 import {addDays,iranInstant,localDate,weeklyPeriod} from './core/time.js';
 import {isPublicPushEndpoint} from './modules/notifications.js';
+import {cleanupOrphans} from './modules/media.js';
 
 const vapidReady=()=>!!(process.env.VAPID_PUBLIC_KEY&&process.env.VAPID_PRIVATE_KEY&&process.env.VAPID_SUBJECT);
 /** Scheduling runs on the server even with no browser. Uniqueness provides safe retries. */
 export async function scheduleWork(now=new Date()):Promise<void>{
   const period=weeklyPeriod(now),today=localDate(now);
   await transaction(async c=>{
+    await c.query('SELECT pg_advisory_xact_lock(727003)');
+    if(!(await c.query('SELECT 1 FROM worker_heartbeats WHERE id=$1',[`tasks:${today}`])).rowCount){
+      await c.query(`INSERT INTO task_occurrences(template_id,date)
+        SELECT t.id,d.day::date FROM task_templates t CROSS JOIN LATERAL
+        generate_series((t.created_at AT TIME ZONE 'Asia/Tehran')::date,$1::date,interval '1 day') d(day)
+        WHERE t.active AND t.weekdays IS NOT NULL AND t.weekdays @> to_jsonb(ARRAY[extract(dow FROM d.day)::int])
+        ON CONFLICT(template_id,date) DO NOTHING`,[today]);
+      await c.query(`INSERT INTO task_occurrences(template_id,date) SELECT id,COALESCE(due_date,(created_at AT TIME ZONE 'Asia/Tehran')::date) FROM task_templates WHERE active AND weekdays IS NULL ON CONFLICT DO NOTHING`);
+      await c.query('INSERT INTO worker_heartbeats(id) VALUES($1) ON CONFLICT(id) DO UPDATE SET updated_at=now()',[`tasks:${today}`]);
+      await c.query('DELETE FROM sessions WHERE expires_at<now()');
+    }
     await c.query(`UPDATE work_items w SET assignee_id=p.reminder_user_id FROM pages p WHERE p.id=w.page_id AND w.completed_at IS NULL AND w.assignee_id IS DISTINCT FROM p.reminder_user_id`);
     const pages=(await c.query('SELECT * FROM pages')).rows;
     for(const page of pages){
-      const due=iranInstant(period.end,page.settings.weeklyReminderTime??'09:00');
-      await c.query(`INSERT INTO work_items(dedupe_key,type,page_id,period_start,assignee_id,due_at,completed_at,completed_by)
-        SELECT $1,'weekly',$2,$3,$4,$5,r.submitted_at,r.submitter_id FROM (SELECT 1) x LEFT JOIN weekly_reports r ON r.page_id=$2 AND r.period_start=$3 AND r.finalized
-        ON CONFLICT(dedupe_key) DO NOTHING`,[`weekly:${page.id}:${period.start}`,page.id,period.start,page.reminder_user_id,due]);
+      // Recover missed Saturdays after worker downtime. The latest completed period is
+      // always available; older periods begin with the page's creation week.
+      const created=weeklyPeriod(new Date(page.created_at));
+      const earliest=addDays(created.start,7)<period.start?addDays(created.start,7):period.start;
+      for(let start=earliest;start<=period.start;start=addDays(start,7)){
+        const end=addDays(start,7),due=iranInstant(end,page.settings.weeklyReminderTime??'09:00');
+        await c.query(`INSERT INTO work_items(dedupe_key,type,page_id,period_start,assignee_id,due_at,completed_at,completed_by)
+          SELECT $1,'weekly',$2,$3,$4,$5,r.submitted_at,r.submitter_id FROM (SELECT 1) x LEFT JOIN weekly_reports r ON r.page_id=$2 AND r.period_start=$3 AND r.finalized
+          ON CONFLICT(dedupe_key) DO NOTHING`,[`weekly:${page.id}:${start}`,page.id,start,page.reminder_user_id,due]);
+      }
     }
+    await c.query(`UPDATE work_items w SET completed_at=r.submitted_at,completed_by=r.submitter_id FROM weekly_reports r WHERE w.type='weekly' AND w.page_id=r.page_id AND w.period_start=r.period_start AND r.finalized AND w.completed_at IS NULL`);
+    await c.query(`UPDATE work_items w SET completed_at=a.finalized_at,completed_by=a.submitter_id FROM analytics_snapshots a WHERE w.type='analytics' AND w.content_id=a.content_id AND w.checkpoint=a.checkpoint AND a.finalized AND w.completed_at IS NULL`);
     await c.query(`INSERT INTO jobs(dedupe_key,type,payload,run_at)
       SELECT 'reminder:'||w.id||':'||$1,'work_reminder',jsonb_build_object('workId',w.id),GREATEST(w.due_at,$2::timestamptz)
       FROM work_items w WHERE w.completed_at IS NULL AND w.assignee_id IS NOT NULL AND w.due_at<=$2::timestamptz
@@ -29,6 +49,10 @@ async function workReminder(workId:string,dedupe:string):Promise<void>{
   await transaction(async c=>{
     const w=(await c.query(`SELECT w.*,p.reminder_user_id FROM work_items w JOIN pages p ON p.id=w.page_id WHERE w.id=$1 FOR UPDATE OF w`,[workId])).rows[0];
     if(!w||w.completed_at||!w.reminder_user_id)return;
+    const completed=w.type==='weekly'?
+      (await c.query('SELECT submitted_at AS at,submitter_id AS actor FROM weekly_reports WHERE page_id=$1 AND period_start=$2 AND finalized',[w.page_id,w.period_start])).rows[0]:
+      (await c.query('SELECT finalized_at AS at,submitter_id AS actor FROM analytics_snapshots WHERE content_id=$1 AND checkpoint=$2 AND finalized ORDER BY finalized_at LIMIT 1',[w.content_id,w.checkpoint])).rows[0];
+    if(completed){await c.query('UPDATE work_items SET completed_at=$2,completed_by=$3 WHERE id=$1',[w.id,completed.at,completed.actor]);return;}
     await c.query('UPDATE work_items SET assignee_id=$2 WHERE id=$1',[w.id,w.reminder_user_id]);
     if(!(await c.query('SELECT id FROM users WHERE id=$1 AND active',[w.reminder_user_id])).rowCount)return;
     await notify(c,w.reminder_user_id,w.type==='weekly'?'weekly_due':'analytics_due',w.type==='weekly'?'گزارش هفتگی آمادهٔ ثبت است.':'زمان ثبت آمار محتوا رسیده است.',{pageId:w.page_id,contentId:w.content_id,checkpoint:w.checkpoint,periodStart:w.period_start,href:w.content_id?`/content/${w.content_id}`:`/pages/${w.page_id}/weekly`},undefined,dedupe);
@@ -87,9 +111,12 @@ export async function processOneJob(now=new Date()):Promise<boolean>{
 }
 export async function runWorker():Promise<void>{
   let running=true;process.once('SIGTERM',()=>{running=false;});process.once('SIGINT',()=>{running=false;});
+  let cleanupDay='';
   while(running){
-    try{await scheduleWork();for(let i=0;i<100&&running;i++)if(!await processOneJob())break;}
-    catch{console.error('خطا در پردازش پس‌زمینه؛ تلاش مجدد انجام می‌شود.');}
+    try{await scheduleWork();for(let i=0;i<100&&running;i++)if(!await processOneJob())break;
+      if(cleanupDay!==localDate()){await cleanupOrphans(Number(process.env.ORPHAN_GRACE_HOURS||24));cleanupDay=localDate();}
+    }
+    catch(error:any){console.error('Background processing failed; will retry.',{code:error.code||error.name});}
     if(running)await new Promise<void>(resolve=>{setTimeout(resolve,1000);});
   }
   await pool.end();

@@ -26,7 +26,7 @@ export async function registerAuth(app: FastifyInstance): Promise<void> {
       await tx.query("INSERT INTO sessions(token_hash,user_id,expires_at) VALUES($1,$2,now()+$3*interval '1 day')", [digest(token),record.id,days]);
       await audit(tx,record.id,'login','user',record.id);
     });
-    reply.setCookie('session', token, {path:'/',httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',maxAge:days*86400});
+    reply.setCookie('session', token, {path:'/',httpOnly:true,secure:process.env.APP_ORIGIN?.startsWith('https://')??false,sameSite:'strict',maxAge:days*86400});
     return {data:await sessionUser(token)};
   });
   app.post('/api/auth/logout', async (req,reply) => {
