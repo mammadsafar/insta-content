@@ -1,0 +1,38 @@
+import {test,expect} from '@playwright/test';
+
+test.skip(!process.env.E2E_EMAIL||!process.env.E2E_PASSWORD,'Supply isolated test account credentials; no default user is created.');
+test('Persian RTL workspace, themes, content forms and Jalali wheel work without horizontal overflow',async({page},info)=>{
+  await page.goto('/');
+  await page.getByLabel('ایمیل',{exact:true}).fill(process.env.E2E_EMAIL!);
+  await page.getByLabel('رمز عبور',{exact:true}).fill(process.env.E2E_PASSWORD!);
+  await page.getByRole('button',{name:'ورود به روز'}).click();
+  await expect(page.getByRole('heading',{name:/سلام/})).toBeVisible();
+  expect(await page.locator('html').getAttribute('dir')).toBe('rtl');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await page.screenshot({path:`test-results/${info.project.name}-today.png`});
+  const nav=info.project.name.startsWith('desktop')?page.getByRole('navigation',{name:'بخش‌های اصلی'}):page.getByRole('navigation',{name:'ناوبری موبایل'});
+  await nav.getByRole('button',{name:'صفحه‌ها',exact:true}).click();
+  await expect(page.getByRole('button',{name:'محتوای تازه'})).toBeVisible();
+  await page.getByRole('button',{name:'محتوای تازه'}).click();
+  await expect(page.getByRole('dialog',{name:'محتوای تازه'})).toBeVisible();
+  await page.getByLabel('کد یا عنوان کوتاه').fill('پیش‌نویس آزمون مرورگر');
+  await page.getByRole('button',{name:'انتخاب تاریخ',exact:true}).first().click();
+  await expect(page.getByRole('listbox',{name:'ماه'})).toBeVisible();
+  await page.getByRole('button',{name:'فردا',exact:true}).click();
+  await expect(page.getByRole('listbox',{name:'روز'})).toBeVisible();
+  await page.getByRole('button',{name:'انتخاب تاریخ',exact:true}).last().click();
+  await expect(page.getByRole('dialog',{name:'محتوای تازه'})).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button',{name:'استوری‌ها',exact:true}).click();
+  await expect(page.getByRole('button',{name:'بسته استوری'})).toBeVisible();
+  await page.screenshot({path:`test-results/${info.project.name}-stories.png`});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  expect(await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+  const settings=page.getByRole('button',{name:'تنظیمات حساب'});
+  if(await settings.isVisible())await settings.click();else await page.locator('.account-button').click();
+  await page.getByRole('button',{name:'همراه دستگاه',exact:true}).click();
+  const theme=info.project.name.endsWith('dark')?'dark':'light';
+  await expect(page.locator('html')).toHaveAttribute('data-theme',theme);
+});

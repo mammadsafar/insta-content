@@ -1,0 +1,10 @@
+{
+  "all": true,
+  "include": ["server/**/*.ts", "scripts/*.ts"],
+  "extension": [".ts"],
+  "exclude": [],
+  "reporter": ["text", "lcov"],
+  "check-coverage": true,
+  "lines": 80,
+  "statements": 80
+}
