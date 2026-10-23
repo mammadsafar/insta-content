@@ -54,7 +54,9 @@ async function accessibleAsset(id: string, user: User, download: boolean): Promi
 async function streamAsset(request: FastifyRequest, reply: FastifyReply, download: boolean) {
   const user = requireUser(request);
   const asset = await accessibleAsset(assetId(request), user, download);
-  const thumbnail = z.object({ thumbnail: z.enum(['1']).optional() }).parse(request.query).thumbnail === '1';
+  let thumbnail = z.object({ thumbnail: z.enum(['1']).optional() }).parse(request.query).thumbnail === '1';
+  // Hosts whose CPU cannot run sharp store no thumbnails; images then fall back to the original file.
+  if (thumbnail && !asset.thumbnail_key && String(asset.mime_type).startsWith('image/')) thumbnail = false;
   if (thumbnail && !asset.thumbnail_key) throw new HttpError(404, 'این فایل تصویر بندانگشتی ندارد؛ از کاور انتخابی استفاده کنید');
   const key = thumbnail ? asset.thumbnail_key : asset.storage_key;
   let handle;

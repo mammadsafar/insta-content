@@ -5,8 +5,27 @@ import { basename, resolve, join } from 'node:path';
 import { Transform, type Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileTypeFromFile } from 'file-type';
-import sharp from 'sharp';
+import type sharp from 'sharp';
+import { imageSizeFromFile } from 'image-size/fromFile';
 import { HttpError } from './security.js';
+
+type SharpFactory = typeof sharp;
+let sharpPromise: Promise<SharpFactory | null> | undefined;
+/**
+ * sharp's prebuilt binaries need an x86-64-v2 CPU. Old virtual CPUs (for example "Common KVM processor")
+ * cannot load it, which used to crash the app and worker at startup. Instead we degrade: images are still
+ * validated and measured from their headers, but no thumbnail is generated (the media route then serves
+ * the original). Set DISABLE_SHARP=1 to force this mode.
+ */
+function loadSharp(): Promise<SharpFactory | null> {
+  sharpPromise ??= process.env.DISABLE_SHARP === '1'
+    ? Promise.resolve(null)
+    : import('sharp').then((module: any) => (module.default ?? module) as SharpFactory).catch((error: unknown) => {
+      console.warn('sharp is unavailable; image thumbnails are disabled:', (error instanceof Error ? error.message : String(error)).split('\n')[0]);
+      return null;
+    });
+  return sharpPromise;
+}
 
 export type AssetPurpose = 'content' | 'feedback' | 'music' | 'insights' | 'avatar';
 export type StoredFile = { storageKey: string; thumbnailKey?: string; mimeType: string; size: number; width?: number; height?: number };
@@ -87,19 +106,29 @@ export async function storeUpload(stream: Readable, options: { root?: string; ma
     if (mime === 'video/ogg' && claimed === 'audio/ogg') mime = 'audio/ogg';
     if (!allowedPurpose(mime, options.purpose) || (claimed !== mime && claimed !== 'application/octet-stream')) throw new HttpError(415, 'نوع واقعی فایل با فرمت مجاز مطابقت ندارد');
     let dimensions: { width?: number; height?: number } = {};
+    let hasThumbnail = false;
     if (imageTypes.has(mime)) {
-      const image = sharp(originalPath, { limitInputPixels: 80_000_000, animated: false, failOn: 'error' });
-      const metadata = await image.metadata().catch(()=>{throw new HttpError(415,'ساختار تصویر معتبر نیست');});
-      if (!metadata.width || !metadata.height) throw new HttpError(415, 'تصویر معتبر نیست');
-      dimensions = { width: metadata.width, height: metadata.height };
-      await image.rotate().resize(640, 640, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(storagePath(thumbnailKey, root)).catch((error:any)=>{
-        if(['ENOSPC','EACCES','EIO'].includes(error.code))throw error;
-        throw new HttpError(415,'ساختار تصویر معتبر نیست');
-      });
-      await chmod(storagePath(thumbnailKey, root), 0o400);
+      const sharp = await loadSharp();
+      if (sharp) {
+        const image = sharp(originalPath, { limitInputPixels: 80_000_000, animated: false, failOn: 'error' });
+        const metadata = await image.metadata().catch(()=>{throw new HttpError(415,'ساختار تصویر معتبر نیست');});
+        if (!metadata.width || !metadata.height) throw new HttpError(415, 'تصویر معتبر نیست');
+        dimensions = { width: metadata.width, height: metadata.height };
+        await image.rotate().resize(640, 640, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(storagePath(thumbnailKey, root)).catch((error:any)=>{
+          if(['ENOSPC','EACCES','EIO'].includes(error.code))throw error;
+          throw new HttpError(415,'ساختار تصویر معتبر نیست');
+        });
+        await chmod(storagePath(thumbnailKey, root), 0o400);
+        hasThumbnail = true;
+      } else {
+        const info = await imageSizeFromFile(originalPath).catch(()=>{throw new HttpError(415,'ساختار تصویر معتبر نیست');});
+        if (!info.width || !info.height) throw new HttpError(415, 'تصویر معتبر نیست');
+        if (info.width * info.height > 80_000_000) throw new HttpError(415, 'ابعاد تصویر بیش از حد مجاز است');
+        dimensions = { width: info.width, height: info.height };
+      }
     }
     await chmod(originalPath, 0o400);
-    return { storageKey, thumbnailKey: imageTypes.has(mime) ? thumbnailKey : undefined, mimeType: mime, size, ...dimensions };
+    return { storageKey, thumbnailKey: hasThumbnail ? thumbnailKey : undefined, mimeType: mime, size, ...dimensions };
   } catch (error) {
     await removeStoredFiles({ storageKey, thumbnailKey }, root);
     if (error instanceof HttpError) throw error;
