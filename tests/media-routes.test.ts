@@ -75,6 +75,10 @@ test('uploads enforce permissions, valid signatures and exact original bytes', {
   assert.equal(download.statusCode, 200);
   assert.deepEqual(download.rawPayload, png);
   assert.match(String(download.headers['content-disposition']), /^attachment;/);
+  const originalOnly = await app.inject({ url: `/api/media/${asset.id}/download?thumbnail=1`, headers: headers('viewer') });
+  assert.equal(originalOnly.statusCode, 200);
+  assert.deepEqual(originalOnly.rawPayload, png, 'download always serves the original, even if a thumbnail query is present');
+  assert.equal(originalOnly.headers['content-type'], 'image/png');
   const zip = await app.inject({ url: `/api/content/${ids.content}/download.zip`, headers: headers('viewer') });
   assert.equal(zip.statusCode, 200);
   assert.equal(zip.rawPayload.subarray(0, 4).toString('hex'), '504b0304');

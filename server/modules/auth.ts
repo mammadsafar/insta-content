@@ -5,7 +5,7 @@ import { one, query, transaction } from '../core/db.js';
 import { audit, hashPassword, HttpError, requireOwner, requireUser, verifyPassword, type User } from '../core/security.js';
 
 const digest = (token: string) => createHash('sha256').update(token).digest('hex');
-const userFields = 'id,name,email,role,active,theme';
+const userFields = 'id,name,email,role,active,theme,avatar_id';
 export async function sessionUser(token: string | undefined): Promise<User | null> {
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
   const user = await one(`SELECT ${userFields.split(',').map((f) => `u.${f}`).join(',')} FROM sessions s JOIN users u ON u.id=s.user_id WHERE token_hash=$1 AND expires_at>now() AND u.active`, [digest(token)]);
@@ -38,15 +38,20 @@ export async function registerAuth(app: FastifyInstance): Promise<void> {
   app.get('/api/auth/me', async (req) => ({data:requireUser(req)}));
   app.patch('/api/auth/me', async (req) => {
     const user=requireUser(req);
-    const body=z.object({name:z.string().trim().min(1).max(100).optional(),theme:z.enum(['light','dark','system']).optional(),password:z.string().min(12).max(256).optional(),currentPassword:z.string().max(256).optional()}).strict().parse(req.body);
+    const body=z.object({name:z.string().trim().min(1).max(100).optional(),theme:z.enum(['light','dark','system']).optional(),avatarId:z.uuid().nullable().optional(),password:z.string().min(12).max(256).optional(),currentPassword:z.string().max(256).optional()}).strict().parse(req.body);
     if(body.password){
       const record=await one('SELECT password_hash FROM users WHERE id=$1',[user.id]);
       if(!body.currentPassword || !await verifyPassword(body.currentPassword,record.password_hash)) throw new HttpError(400,'رمز عبور فعلی صحیح نیست.');
     }
     await transaction(async(tx)=>{
+      if(body.avatarId){
+        const asset=(await tx.query("SELECT id FROM assets WHERE id=$1 AND uploader_id=$2 AND purpose='profile_avatar' AND completed AND mime_type LIKE 'image/%' FOR SHARE",[body.avatarId,user.id])).rows[0];
+        if(!asset) throw new HttpError(400,'فقط عکس پروفایل بارگذاری‌شده توسط خودتان قابل انتخاب است.');
+      }
+      if(body.avatarId!==undefined) await tx.query('UPDATE users SET avatar_id=$2 WHERE id=$1',[user.id,body.avatarId]);
       await tx.query('UPDATE users SET name=coalesce($2,name),theme=coalesce($3,theme),password_hash=coalesce($4,password_hash) WHERE id=$1',[user.id,body.name,body.theme,body.password ? await hashPassword(body.password):null]);
       if(body.password) await tx.query('DELETE FROM sessions WHERE user_id=$1 AND token_hash<>$2',[user.id,digest(req.cookies.session!)]);
-      await audit(tx,user.id,'profile_update','user',user.id,{theme:body.theme,passwordChanged:Boolean(body.password)});
+      await audit(tx,user.id,'profile_update','user',user.id,{theme:body.theme,passwordChanged:Boolean(body.password),avatarChanged:body.avatarId!==undefined});
     });
     return {data:await sessionUser(req.cookies.session)};
   });

@@ -5,7 +5,7 @@ import type { PoolClient } from 'pg';
 
 const scrypt = promisify(scryptCallback);
 export interface Permission { page_id: string; can_edit: boolean; can_suggest: boolean; can_report: boolean }
-export interface User { id: string; name: string; email: string; role: 'owner' | 'member'; active: boolean; theme: string; permissions: Permission[] }
+export interface User { id: string; name: string; email: string; role: 'owner' | 'member'; active: boolean; theme: string; avatar_id?: string | null; permissions: Permission[] }
 declare module 'fastify' { interface FastifyRequest { user: User | null } }
 
 export class HttpError extends Error {

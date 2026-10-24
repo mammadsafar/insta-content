@@ -8,7 +8,7 @@ import { requireUser, requireOwner, authorize, can, audit, HttpError, type User 
 import { contentDisposition, fileMaxBytes, parseRange, safeFilename, storagePath, storageRoot, storeUpload, removeStoredFiles, type StoredFile } from '../core/storage.js';
 
 const uuid = z.string().uuid();
-const uploadQuery = z.object({ pageId: uuid, purpose: z.enum(['content', 'feedback', 'music', 'insights', 'avatar']).default('content') }).strict();
+const uploadQuery = z.object({ pageId: uuid.optional(), purpose: z.enum(['content', 'feedback', 'music', 'insights', 'avatar', 'profile_avatar']).default('content') }).strict().refine(input => input.purpose === 'profile_avatar' ? !input.pageId : !!input.pageId, { message: 'صفحه برای فایل‌های صفحه الزامی است؛ عکس شخصی به صفحه وابسته نیست' });
 function assetId(request: FastifyRequest): string { return z.object({ id: uuid }).parse(request.params).id; }
 /** Never expose storage paths/keys, which remain an internal implementation detail. */
 export function assetMetadata(asset: any) {
@@ -26,6 +26,7 @@ function referencedSql(): string {
     OR EXISTS(SELECT 1 FROM content_revisions r WHERE ${dataReferences('r')})
     OR EXISTS(SELECT 1 FROM feedback f WHERE f.audio_id=a.id OR f.asset_id=a.id)
     OR EXISTS(SELECT 1 FROM pages p WHERE p.avatar_id=a.id)
+    OR EXISTS(SELECT 1 FROM users u WHERE u.avatar_id=a.id)
     OR EXISTS(SELECT 1 FROM weekly_reports w WHERE w.screenshots ? a.id::text))`;
 }
 async function accessibleAsset(id: string, user: User, download: boolean): Promise<any> {
@@ -36,7 +37,9 @@ async function accessibleAsset(id: string, user: User, download: boolean): Promi
   const approved = content.some(c => ['approved', 'published'].includes(c.state) && c.approved_revision === c.revision);
   const isUploader = asset.uploader_id === user.id;
   if (user.role === 'owner') return asset;
-  if (asset.purpose === 'insights') {
+  if (asset.purpose === 'profile_avatar') {
+    if (!isUploader && !await one('SELECT id FROM users WHERE avatar_id=$1 AND active', [id])) throw new HttpError(403, 'دسترسی به این فایل مجاز نیست');
+  } else if (asset.purpose === 'insights') {
     // Entry access does not grant report/screenshot visibility to other members.
     if (!isUploader && !can(user, asset.page_id, 'report')) throw new HttpError(403, 'دسترسی به این فایل مجاز نیست');
   } else if (asset.purpose === 'avatar') {
@@ -54,7 +57,7 @@ async function accessibleAsset(id: string, user: User, download: boolean): Promi
 async function streamAsset(request: FastifyRequest, reply: FastifyReply, download: boolean) {
   const user = requireUser(request);
   const asset = await accessibleAsset(assetId(request), user, download);
-  let thumbnail = z.object({ thumbnail: z.enum(['1']).optional() }).parse(request.query).thumbnail === '1';
+  let thumbnail = z.object({ thumbnail: z.enum(['1']).optional() }).parse(request.query).thumbnail === '1' && !download;
   // Hosts whose CPU cannot run sharp store no thumbnails; images then fall back to the original file.
   if (thumbnail && !asset.thumbnail_key && String(asset.mime_type).startsWith('image/')) thumbnail = false;
   if (thumbnail && !asset.thumbnail_key) throw new HttpError(404, 'این فایل تصویر بندانگشتی ندارد؛ از کاور انتخابی استفاده کنید');
@@ -80,18 +83,19 @@ export async function registerMedia(app: FastifyInstance): Promise<void> {
   app.post('/api/media', async (request, reply) => {
     const user = requireUser(request);
     const input = uploadQuery.parse(request.query);
-    if (!await one('SELECT id FROM pages WHERE id=$1', [input.pageId])) throw new HttpError(404, 'صفحه پیدا نشد');
-    if (input.purpose === 'content' || input.purpose === 'music') authorize(user, input.pageId, 'edit');
-    if (input.purpose === 'feedback') authorize(user, input.pageId, 'suggest');
+    if (input.pageId && !await one('SELECT id FROM pages WHERE id=$1', [input.pageId])) throw new HttpError(404, 'صفحه پیدا نشد');
+    if (input.purpose === 'content' || input.purpose === 'music') authorize(user, input.pageId!, 'edit');
+    if (input.purpose === 'feedback') authorize(user, input.pageId!, 'suggest');
     if (input.purpose === 'avatar') requireOwner(user);
     let stored: StoredFile | undefined;
     let originalName = '';
     try {
-      const parts = request.parts({ limits: { fileSize: fileMaxBytes(), files: 1, fields: 0, parts: 1 } });
+      const maxBytes = input.purpose === 'profile_avatar' ? Math.min(fileMaxBytes(), 5 * 1024 * 1024) : fileMaxBytes();
+      const parts = request.parts({ limits: { fileSize: maxBytes, files: 1, fields: 0, parts: 1 } });
       for await (const part of parts) {
         if (part.type !== 'file' || part.fieldname !== 'file' || stored) throw new HttpError(400, 'یک فایل در فیلد file لازم است');
         originalName = safeFilename(part.filename);
-        stored = await storeUpload(part.file, { purpose: input.purpose, claimedMime: part.mimetype });
+        stored = await storeUpload(part.file, { maxBytes, purpose: input.purpose, claimedMime: part.mimetype });
         if (part.file.truncated) throw new HttpError(413, 'اندازه فایل بیش از حد مجاز است');
       }
       if (!stored) throw new HttpError(400, 'فایل انتخاب نشده است');

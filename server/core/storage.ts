@@ -27,7 +27,7 @@ function loadSharp(): Promise<SharpFactory | null> {
   return sharpPromise;
 }
 
-export type AssetPurpose = 'content' | 'feedback' | 'music' | 'insights' | 'avatar';
+export type AssetPurpose = 'content' | 'feedback' | 'music' | 'insights' | 'avatar' | 'profile_avatar';
 export type StoredFile = { storageKey: string; thumbnailKey?: string; mimeType: string; size: number; width?: number; height?: number };
 const imageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']);
 const videoTypes = new Set(['video/mp4', 'video/webm', 'video/quicktime']);
@@ -66,7 +66,7 @@ export function parseRange(value: string | undefined, size: number): { start: nu
   return { start, end };
 }
 function allowedPurpose(mime: string, purpose: AssetPurpose): boolean {
-  if (purpose === 'avatar' || purpose === 'insights') return imageTypes.has(mime);
+  if (purpose === 'profile_avatar' || purpose === 'avatar' || purpose === 'insights') return imageTypes.has(mime);
   if (purpose === 'feedback' || purpose === 'music') return audioTypes.has(mime);
   return imageTypes.has(mime) || videoTypes.has(mime);
 }

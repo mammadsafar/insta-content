@@ -1,7 +1,8 @@
 import React,{createContext,useContext,useEffect,useId,useRef,useState} from 'react';
+import {createPortal} from 'react-dom';
 import {X,LoaderCircle,Sun,Plus} from 'lucide-react';
 export type Row=Record<string,any>;
-export type User={id:string;name:string;email:string;role:string;theme:string;permissions:Row[]};
+export type User={id:string;name:string;email:string;role:string;theme:string;avatar_id?:string|null;permissions:Row[]};
 export const Session=createContext<{user:User;refresh:()=>Promise<void>;pages:Row[];toast:(s:string)=>void}>({} as any);
 export const useSession=()=>useContext(Session);
 let csrf='';
@@ -25,16 +26,37 @@ export function StateBadge({state}:{state:string}){return <span className={`badg
 export function Empty({title,children}:{title:string;children?:React.ReactNode}){return <div className="empty"><span className="empty-icon"><Sun size={28}/></span><h3>{title}</h3>{children&&<p>{children}</p>}</div>;}
 export function Spinner(){return <div className="loading" role="status"><LoaderCircle className="spin" size={22}/><span>در حال دریافت…</span></div>;}
 export function ErrorBox({error,retry}:{error:string;retry?:()=>void}){return <div role="alert" className="error">{error}{retry&&<button onClick={retry}>تلاش دوباره</button>}</div>;}
+let modalCount=0;
+let savedScroll:{x:number;y:number;style:string|null}|null=null;
 export function Modal({title,children,onClose,wide=false}:{title:string;children:React.ReactNode;onClose:()=>void;wide?:boolean}){
- const dialogRef=useRef<HTMLElement>(null);useEffect(()=>{const previous=document.activeElement as HTMLElement;const handler=(e:KeyboardEvent)=>{if(Array.from(document.querySelectorAll('[role="dialog"]')).at(-1)!==dialogRef.current)return;if(e.key==='Escape')onClose();if(e.key==='Tab'){const modal=Array.from(document.querySelectorAll('[role="dialog"]')).at(-1);const all=modal?.querySelectorAll<HTMLElement>('button:not(:disabled),input,select,textarea,a[href],[tabindex="0"]');if(!all?.length)return;const first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}};document.addEventListener('keydown',handler);document.body.style.overflow='hidden';const timer=setTimeout(()=>Array.from(document.querySelectorAll<HTMLElement>('[role="dialog"]')).at(-1)?.querySelector<HTMLElement>('button')?.focus(),0);return()=>{clearTimeout(timer);document.removeEventListener('keydown',handler);document.body.style.overflow='';previous?.focus();};},[]);
- return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><section ref={dialogRef} className={`modal ${wide?'wide':''}`} role="dialog" aria-modal="true" aria-label={title}><div className="modal-heading"><h2>{title}</h2><button className="icon-button" aria-label="بستن" onClick={onClose}><X size={22}/></button></div>{children}</section></div>;
+ const dialogRef=useRef<HTMLElement>(null),closeRef=useRef(onClose);closeRef.current=onClose;
+ useEffect(()=>{
+  const previous=document.activeElement as HTMLElement;
+  if(modalCount++===0){savedScroll={x:window.scrollX,y:window.scrollY,style:document.body.getAttribute('style')};Object.assign(document.body.style,{position:'fixed',top:`-${savedScroll.y}px`,left:'0',right:'0',overflow:'hidden'});}
+  const handler=(e:KeyboardEvent)=>{
+   if(Array.from(document.querySelectorAll('[role="dialog"]')).at(-1)!==dialogRef.current)return;
+   if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeRef.current();}
+   if(e.key!=='Tab')return;
+   const all=Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]')||[]).filter(el=>el.getClientRects().length>0);
+   if(!all.length)return;const first=all[0],last=all[all.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  };
+  document.addEventListener('keydown',handler);
+  const timer=setTimeout(()=>dialogRef.current?.querySelector<HTMLElement>('button')?.focus({preventScroll:true}),0);
+  return()=>{
+   clearTimeout(timer);document.removeEventListener('keydown',handler);
+   if(--modalCount===0&&savedScroll){const saved=savedScroll;savedScroll=null;if(saved.style===null)document.body.removeAttribute('style');else document.body.setAttribute('style',saved.style);window.scrollTo(saved.x,saved.y);}
+   if(previous?.isConnected)previous.focus({preventScroll:true});
+  };
+ },[]);
+ return createPortal(<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><section ref={dialogRef} className={`modal ${wide?'wide':''}`} role="dialog" aria-modal="true" aria-label={title}><div className="modal-heading"><h2>{title}</h2><button className="icon-button" aria-label="بستن" onClick={onClose}><X size={22}/></button></div><div className="modal-body">{children}</div></section></div>,document.body);
 }
 export function useResource<T=any>(path:string|null,deps:unknown[]=[]){const [data,setData]=useState<T|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);async function refresh(){if(!path){setLoading(false);return;}setLoading(true);setError('');try{setData(await api<T>(path));}catch(e){setError((e as Error).message);}finally{setLoading(false);}}useEffect(()=>{void refresh();},[path,...deps]);return {data,error,loading,refresh,setData};}
 export function Field({label,children,hint}:{label:string;children:React.ReactNode;hint?:string}){const id=useId();const native=React.isValidElement(children)&&typeof children.type==='string'&&['input','textarea','select'].includes(children.type);return <div className="field">{native?<label htmlFor={id}>{label}</label>:<span>{label}</span>}{native?React.cloneElement(children as React.ReactElement<{id?:string}>,{id}):children}{hint&&<small>{hint}</small>}</div>;}
 export function Action({children,run,className='',disabled=false}:{children:React.ReactNode;run:()=>Promise<any>;className?:string;disabled?:boolean}){const [busy,setBusy]=useState(false),[error,setError]=useState('');return <><button disabled={busy||disabled} className={className} onClick={async()=>{setBusy(true);setError('');try{await run();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}}>{busy?<LoaderCircle className="spin" size={18}/>:children}</button>{error&&<ErrorBox error={error}/>}</>;}
 export function AddButton({children,onClick}:{children:React.ReactNode;onClick:()=>void}){return <button className="primary" onClick={onClick}><Plus size={18}/>{children}</button>;}
-export function Upload({pageId,purpose='content',accept='image/*,video/*',onUploaded,multiple=true}:{pageId:string;purpose?:string;accept?:string;onUploaded:(asset:Row)=>void;multiple?:boolean}){
+export function Upload({pageId,purpose='content',accept='image/*,video/*',onUploaded,multiple=true}:{pageId?:string;purpose?:string;accept?:string;onUploaded:(asset:Row)=>void;multiple?:boolean}){
  const [jobs,setJobs]=useState<{file:File;progress:number;error:string;done:boolean}[]>([]);
- function transfer(file:File){setJobs(previous=>[...previous.filter(j=>j.file!==file),{file,progress:0,error:'',done:false}]);const xhr=new XMLHttpRequest();xhr.open('POST',`/api/media?purpose=${purpose}&pageId=${pageId}`);xhr.withCredentials=true;if(csrf)xhr.setRequestHeader('X-CSRF-Token',csrf);const update=(change:Row)=>setJobs(previous=>previous.map(j=>j.file===file?{...j,...change}:j));xhr.upload.onprogress=e=>update({progress:e.lengthComputable?Math.round(e.loaded/e.total*100):0});xhr.onload=()=>{try{const value=JSON.parse(xhr.responseText);if(xhr.status<200||xhr.status>=300)throw new Error(value.error||'بارگذاری ناموفق');update({done:true,progress:100});onUploaded(value.data);}catch(e){update({error:(e as Error).message});}};xhr.onerror=()=>update({error:'ارتباط قطع شد؛ فایل را دوباره بارگذاری کنید.'});const body=new FormData();body.append('file',file);xhr.send(body);}
+ function transfer(file:File){setJobs(previous=>[...previous.filter(j=>j.file!==file),{file,progress:0,error:'',done:false}]);const xhr=new XMLHttpRequest();xhr.open('POST',`/api/media?${new URLSearchParams({purpose,...(pageId?{pageId}:{})})}`);xhr.withCredentials=true;if(csrf)xhr.setRequestHeader('X-CSRF-Token',csrf);const update=(change:Row)=>setJobs(previous=>previous.map(j=>j.file===file?{...j,...change}:j));xhr.upload.onprogress=e=>update({progress:e.lengthComputable?Math.round(e.loaded/e.total*100):0});xhr.onload=()=>{try{const value=JSON.parse(xhr.responseText);if(xhr.status<200||xhr.status>=300)throw new Error(value.error||'بارگذاری ناموفق');update({done:true,progress:100});onUploaded(value.data);}catch(e){update({error:(e as Error).message});}};xhr.onerror=()=>update({error:'ارتباط قطع شد؛ فایل را دوباره بارگذاری کنید.'});const body=new FormData();body.append('file',file);xhr.send(body);}
  return <div className="upload"><label className="upload-target"><Plus size={22}/><strong>انتخاب فایل</strong><span>فایل اصلی شما بدون تغییر نگهداری می‌شود</span><input type="file" accept={accept} multiple={multiple} onChange={e=>{for(const file of Array.from(e.target.files||[]))transfer(file);e.target.value='';}}/></label>{jobs.map((j,i)=><div className="upload-job" key={i}><span dir="auto">{j.file.name}</span><progress max="100" value={j.progress}/>{j.error?<><small className="danger-text">{j.error}</small><button onClick={()=>transfer(j.file)}>تلاش دوباره</button></>:<small>{j.done?'آماده':`${fa(j.progress)}٪`}</small>}</div>)}</div>;
 }

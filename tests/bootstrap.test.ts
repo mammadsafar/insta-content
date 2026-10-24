@@ -14,7 +14,7 @@ test('fresh migrations are repeatable and bootstrap safely creates exactly one o
   process.env.DATABASE_URL=url.href;
   let isolated:pg.Client|undefined;
   try{
-    assert.deepEqual(await migrate(),['001_initial.sql','002_content.sql']);
+    assert.deepEqual(await migrate(),['001_initial.sql','002_content.sql','003_profile_avatars.sql']);
     assert.deepEqual(await migrate(),[]);
     await assert.rejects(bootstrapOwner({name:'Invalid',email:'not-email',password:'Valid-long-password'}),/valid owner email/);
     await assert.rejects(bootstrapOwner({name:'Owner',email:'owner@test.invalid',password:'short'}),/12/);
