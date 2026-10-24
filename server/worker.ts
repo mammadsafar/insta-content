@@ -3,10 +3,10 @@ import webpush from 'web-push';
 import {pool,query,transaction} from './core/db.js';
 import {notify} from './core/security.js';
 import {addDays,iranInstant,localDate,weeklyPeriod} from './core/time.js';
-import {isPublicPushEndpoint} from './modules/notifications.js';
+import {isPublicPushEndpoint,vapidConfiguration} from './modules/notifications.js';
 import {cleanupOrphans} from './modules/media.js';
 
-const vapidReady=()=>!!(process.env.VAPID_PUBLIC_KEY&&process.env.VAPID_PRIVATE_KEY&&process.env.VAPID_SUBJECT);
+const vapidReady=()=>vapidConfiguration().enabled;
 /** Scheduling runs on the server even with no browser. Uniqueness provides safe retries. */
 export async function scheduleWork(now=new Date()):Promise<void>{
   const period=weeklyPeriod(now),today=localDate(now);

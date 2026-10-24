@@ -35,6 +35,15 @@ docker compose -f compose.local.yml up -d --build
 
 Compose Watch is an optional rebuild workflow, not in-process hot reload. Host development may use the already installed Node dependencies with `npm run dev` and `npm run dev:web`; configure `DATABASE_URL` explicitly for a development database. Vite proxies `/api` to the configured API port in `vite.config.ts`. Never connect development/tests to production.
 
+The web UI is compiled into the Docker image. `npm run build` on the host does not update an already running container. To apply later UI and worker changes without recreating database or media volumes, the operator can run the matching command for the environment:
+
+```sh
+docker compose -f compose.local.yml up -d --build app worker
+docker compose --env-file .env.production -f compose.production.yml up -d --build app worker
+```
+
+Run only the line for the environment actually in use. The production line assumes the protected `.env.production` has already been created and configured. Reload the browser after the new `app` container is healthy; if the old interface remains, inspect the active proxy upstream and the container image rather than repeating `npm run build` on the host.
+
 ## Production environment
 
 Copy `.env.production.example` to `.env.production` and restrict it with `chmod 600 .env.production`. Set the existing proxy network name and public HTTPS origin. Commands below are instructions for the operator, **not actions already performed**:
@@ -84,7 +93,7 @@ Generate optional VAPID keys yourself with the installed dependency:
 node --input-type=module -e "import webpush from 'web-push'; console.log(webpush.generateVAPIDKeys())"
 ```
 
-Put the keys only in the protected environment file and set `VAPID_SUBJECT` to your contact `mailto:` URL or HTTPS URL. Recreate app/worker yourself after changes. Users opt in from Settings. Permission denial and unsupported browsers retain in-app notifications. iOS/iPadOS may require installation to the home screen. Delivery timing depends on OS/browser/network; real Push delivery has not been tested without operator keys/devices.
+Put the generated key pair only in the protected environment file and set `VAPID_SUBJECT` to your contact `mailto:` URL or HTTPS URL. The settings screen validates the key format and reports missing or invalid configuration; the browser decodes the public key before creating its subscription. Recreate app/worker yourself after changes. Users opt in from Settings. Permission denial and unsupported browsers retain in-app notifications. iOS/iPadOS may require installation to the home screen. Delivery timing depends on OS/browser/network; real Push delivery has not been tested against an operator's browser push service.
 
 ## Monitoring and verification
 
