@@ -36,7 +36,7 @@ const keyPattern = /^[a-f0-9-]{36}\.(?:original|thumb\.webp|pending)$/;
 
 export function storageRoot(): string { return resolve(process.env.MEDIA_ROOT || process.env.MEDIA_DIR || './var/media'); }
 export function fileMaxBytes(): number {
-  const value = Number(process.env.FILE_MAX_BYTES || 524288000);
+  const value = Number(process.env.FILE_MAX_BYTES || 314572800);
   if (!Number.isSafeInteger(value) || value < 1) throw new Error('FILE_MAX_BYTES must be a positive safe integer');
   return value;
 }

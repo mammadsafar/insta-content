@@ -10,6 +10,7 @@ import {readdir} from 'node:fs/promises';
 import {ZodError} from 'zod';
 import {one} from './core/db.js';
 import {HttpError,requireUser} from './core/security.js';
+import {fileMaxBytes} from './core/storage.js';
 import {registerAuth,sessionUser} from './modules/auth.js';
 import {registerPages} from './modules/pages.js';
 import {registerContent} from './modules/content.js';
@@ -34,7 +35,7 @@ export async function createApp(options:{logger?:boolean;staticFiles?:boolean}={
   await app.register(cookie);
   await app.register(helmet,{contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'"],imgSrc:["'self'",'data:','blob:'],mediaSrc:["'self'",'blob:'],connectSrc:["'self'"],fontSrc:["'self'"],objectSrc:["'none'"],frameAncestors:["'none'"],upgradeInsecureRequests:null}},hsts:process.env.APP_ORIGIN?.startsWith('https://')?{maxAge:31536000}:false});
   await app.register(rateLimit,{max:600,timeWindow:'1 minute'});
-  await app.register(multipart,{limits:{fileSize:Number(process.env.FILE_MAX_BYTES||104857600),files:1,fields:8,parts:10}});
+  await app.register(multipart,{limits:{fileSize:fileMaxBytes(),files:1,fields:8,parts:10}});
   app.addHook('onRequest',async(req,reply)=>{
     if(!req.url.startsWith('/api/'))return;
     reply.header('Cache-Control','private, no-store, max-age=0');

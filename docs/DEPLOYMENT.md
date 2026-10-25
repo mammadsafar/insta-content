@@ -60,7 +60,7 @@ docker compose --env-file .env.production -f compose.production.yml ps
 
 Skip bootstrap on upgrades. Take a coordinated backup before migrations. Migrations are ordered SQL files under `db/migrations`, protected by an advisory lock and one transaction per file. Applied migration names are retained; edit a new numbered migration for future changes. Migration failures roll back the failing file and must be resolved before serving new code. Restore database and media together when reverting an incompatible release.
 
-Production has **no `ports:` and no host networking**. Only `app` joins `${PROXY_NETWORK}`. Connect the existing reverse proxy to that network and route to `http://app:3000`. If the shared network contains other services named `app`, configure an unambiguous proxy upstream/container alias appropriate to your proxy. The proxy terminates TLS, preserves Host, forwards the correct client/protocol headers, allows the configured upload size and at least 120 seconds for uploads, and streams Range responses. Configure `TRUST_PROXY` to the actual number of trusted hops, default one. Do not expose the app directly to untrusted proxy peers.
+Production has **no `ports:` and no host networking**. Only `app` joins `${PROXY_NETWORK}`. Connect the existing reverse proxy to that network and route to `http://app:3000`. If the shared network contains other services named `app`, configure an unambiguous proxy upstream/container alias appropriate to your proxy. The proxy terminates TLS, preserves Host, forwards the correct client/protocol headers, allows the configured upload size plus multipart overhead (for example, Nginx `client_max_body_size 320m;` for 300 MiB files) and at least 120 seconds for uploads, and streams Range responses. Configure `TRUST_PROXY` to the actual number of trusted hops, default one. Do not expose the app directly to untrusted proxy peers.
 
 PostgreSQL belongs only to the internal private network. Worker uses private plus its own egress bridge for optional outbound Push. It has no listening HTTP service. `expose` is documentation, not a firewall; network membership provides isolation. No ingress container or provider-specific proxy labels are included.
 
@@ -74,7 +74,7 @@ PostgreSQL belongs only to the internal private network. Worker uses private plu
 | `LOCAL_APP_PORT` | Local host port, default 3001; match APP_ORIGIN. |
 | `PROXY_NETWORK` | Required existing external proxy network in production. |
 | `APP_IMAGE` | Production image name/tag. |
-| `FILE_MAX_BYTES` | Upload limit in bytes; default 104857600. |
+| `FILE_MAX_BYTES` | Upload limit in bytes; default 314572800 (300 MiB per content file). Personal profile photos remain capped at 5 MiB. |
 | `MEDIA_ROOT` | Persistent private filesystem directory, `/app/media` in Compose. |
 | `SESSION_TTL_DAYS` | Session lifetime, bounded to 1–30 days. |
 | `TRUST_PROXY` | Trusted proxy hops; local false, production one. |
