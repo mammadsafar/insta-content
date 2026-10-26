@@ -6,7 +6,8 @@ import { tmpdir } from 'node:os';
 import Fastify, {type FastifyRequest,type FastifyReply} from 'fastify';
 import sharp from 'sharp';
 import multipart from '@fastify/multipart';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
+import { createReadStream } from 'node:fs';
 import { pool, query } from '../server/core/db.js';
 import { registerMedia, cleanupOrphans } from '../server/modules/media.js';
 import { storagePath } from '../server/core/storage.js';
@@ -14,6 +15,7 @@ import type { User } from '../server/core/security.js';
 
 const enabled = !!process.env.DATABASE_URL;
 let app: ReturnType<typeof Fastify>, root: string;
+let editorCanEdit = true;
 const ids = { owner: randomUUID(), editor: randomUUID(), viewer: randomUUID(), page: randomUUID(), content: randomUUID() };
 const png = await sharp({create:{width:1,height:1,channels:3,background:'white'}}).png().toBuffer();
 function body(bytes = png, filename = 'عکس.png', mime = 'image/png') {
@@ -32,7 +34,7 @@ before(async () => {
   await app.register(multipart);
   app.addHook('onRequest', async (req:FastifyRequest) => {
     const name = req.headers['x-test-user'] as 'owner' | 'editor' | 'viewer';
-    req.user = name && ids[name] ? { id: ids[name], name, email: '', role: name === 'owner' ? 'owner' : 'member', active: true, theme: 'system', permissions: [{ page_id: ids.page, can_edit: name === 'editor', can_suggest: name === 'editor', can_report: false }] } satisfies User : null;
+    req.user = name && ids[name] ? { id: ids[name], name, email: '', role: name === 'owner' ? 'owner' : 'member', active: true, theme: 'system', permissions: [{ page_id: ids.page, can_edit: name === 'editor' && editorCanEdit, can_suggest: name === 'editor', can_report: false }] } satisfies User : null;
   });
   app.setErrorHandler((err: any, _req:FastifyRequest, reply:FastifyReply) => reply.code(err.statusCode || 500).send({ error: err.message }));
   await registerMedia(app);
@@ -42,6 +44,7 @@ after(async () => {
   await app?.close();
   await query('DELETE FROM content_revisions WHERE content_id=$1', [ids.content]);
   await query('DELETE FROM content WHERE id=$1', [ids.content]);
+  await query('DELETE FROM media_uploads WHERE page_id=$1', [ids.page]);
   await query('DELETE FROM assets WHERE page_id=$1', [ids.page]);
   await query('DELETE FROM audit_logs WHERE actor_id=ANY($1::uuid[])', [[ids.editor, ids.viewer]]);
   await query('DELETE FROM pages WHERE id=$1', [ids.page]);
@@ -92,4 +95,66 @@ test('orphan cleanup removes only old unreferenced rows and private files', { sk
   assert.equal(await cleanupOrphans(24), 1);
   assert.equal((await query('SELECT id FROM assets WHERE id=$1', [id])).length, 0);
   assert.equal((await readdir(root)).length, 2); // retained approved original + thumbnail
+});
+
+function chunkHeaders(user = 'editor') { return { 'x-test-user': user, 'content-type': 'application/octet-stream' }; }
+async function beginUpload(size: number, name = 'clip.mp4', mimeType = 'video/mp4') {
+  return app.inject({ method: 'POST', url: '/api/media/uploads', headers: { 'x-test-user': 'editor' }, payload: { pageId: ids.page, purpose: 'content', name, mimeType, size } });
+}
+test('chunk sessions enforce ownership, limits, offsets, retries and final validation', { skip: !enabled }, async () => {
+  assert.equal((await app.inject({ url: '/api/media/config' })).statusCode, 401);
+  const config = await app.inject({ url: '/api/media/config', headers: { 'x-test-user': 'editor' } });
+  assert.equal(config.json().data.chunkBytes, 8 * 1024 * 1024);
+  assert.equal((await beginUpload(config.json().data.maxBytes + 1)).statusCode, 413);
+  const denied = await app.inject({ method: 'POST', url: '/api/media/uploads', headers: { 'x-test-user': 'viewer' }, payload: { pageId: ids.page, purpose: 'content', name: 'x.png', mimeType: 'image/png', size: png.length } });
+  assert.equal(denied.statusCode, 403);
+  const created = await beginUpload(png.length, 'photo.png', 'image/png');
+  assert.equal(created.statusCode, 201, created.body);
+  const id = created.json().data.id, url = `/api/media/uploads/${id}`;
+  assert.equal((await app.inject({ url, headers: { 'x-test-user': 'viewer' } })).statusCode, 404);
+  assert.equal((await app.inject({ method: 'PUT', url: `${url}?offset=0`, headers: chunkHeaders('viewer'), payload: png })).statusCode, 404);
+  assert.equal((await app.inject({ method: 'POST', url: `${url}/complete`, headers: { 'x-test-user': 'editor' }, payload: {} })).statusCode, 409);
+  assert.equal((await app.inject({ method: 'PUT', url: `${url}?offset=1`, headers: chunkHeaders(), payload: png })).statusCode, 409);
+  const put = () => app.inject({ method: 'PUT', url: `${url}?offset=0`, headers: chunkHeaders(), payload: png });
+  assert.equal((await put()).json().data.received, png.length);
+  assert.equal((await put()).json().data.received, png.length, 'retry after lost response must be idempotent');
+  assert.equal((await app.inject({ method: 'PUT', url: `${url}?offset=0`, headers: chunkHeaders(), payload: Buffer.alloc(png.length) })).statusCode, 409);
+  const finish = () => app.inject({ method: 'POST', url: `${url}/complete`, headers: { 'x-test-user': 'editor' }, payload: {} });
+  editorCanEdit = false;
+  try { assert.equal((await finish()).statusCode, 403, 'permission revoked after upload must prevent finalization'); }
+  finally { editorCanEdit = true; }
+  const done = await finish();
+  assert.equal(done.statusCode, 201, done.body);
+  assert.equal((await finish()).json().data.id, done.json().data.id, 'completion retry returns same asset');
+  assert.equal(done.json().data.storage_key, undefined);
+  assert.equal((await app.inject({ method: 'PUT', url: `${url}?offset=0`, headers: chunkHeaders(), payload: png })).statusCode, 409);
+  const file = (await query('SELECT * FROM assets WHERE id=$1', [done.json().data.id]))[0];
+  assert.deepEqual(await readFile(storagePath(file.storage_key)), png);
+  const invalid = await beginUpload(4, 'fake.png', 'image/png'), bad = `/api/media/uploads/${invalid.json().data.id}`;
+  await app.inject({ method: 'PUT', url: `${bad}?offset=0`, headers: chunkHeaders(), payload: Buffer.from('fake') });
+  assert.equal((await app.inject({ method: 'POST', url: `${bad}/complete`, headers: { 'x-test-user': 'editor' }, payload: {} })).statusCode, 415);
+  await query("UPDATE media_uploads SET updated_at=now()-interval '2 days' WHERE id=$1", [invalid.json().data.id]);
+  await cleanupOrphans(24);
+  assert.equal((await app.inject({ url: bad, headers: { 'x-test-user': 'editor' } })).statusCode, 404);
+});
+test('a video larger than 100 MiB completes through small requests with exact original bytes', { skip: !enabled }, async () => {
+  const size = 101 * 1024 * 1024, chunkSize = 8 * 1024 * 1024;
+  const created = await beginUpload(size);
+  assert.equal(created.statusCode, 201, created.body);
+  const id = created.json().data.id, expected = createHash('sha256');
+  for (let offset = 0; offset < size; offset += chunkSize) {
+    const bytes = Buffer.alloc(Math.min(chunkSize, size - offset), offset % 251);
+    if (offset === 0) Buffer.from('00000018667479706d703432000000006d70343269736f6d', 'hex').copy(bytes);
+    expected.update(bytes);
+    const sent = await app.inject({ method: 'PUT', url: `/api/media/uploads/${id}?offset=${offset}`, headers: chunkHeaders(), payload: bytes });
+    assert.equal(sent.statusCode, 200, sent.body);
+    assert.equal(sent.json().data.received, offset + bytes.length);
+  }
+  const done = await app.inject({ method: 'POST', url: `/api/media/uploads/${id}/complete`, headers: { 'x-test-user': 'editor' }, payload: {} });
+  assert.equal(done.statusCode, 201, done.body);
+  assert.equal(done.json().data.size, size);
+  const file = (await query('SELECT storage_key FROM assets WHERE id=$1', [done.json().data.id]))[0];
+  const actual = createHash('sha256');
+  for await (const bytes of createReadStream(storagePath(file.storage_key))) actual.update(bytes);
+  assert.equal(actual.digest('hex'), expected.digest('hex'));
 });

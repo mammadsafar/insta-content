@@ -11,6 +11,7 @@ async function setup(page:Page,owner:boolean,dark:boolean){
   if(path.startsWith('/api/media/')){await route.fulfill({contentType:'image/png',body:image});return;}
   if(path.startsWith('/api/')){
    let data:any=[];
+    if(path==='/api/media/config'){await route.fulfill({contentType:'application/json',body:JSON.stringify({data:{maxBytes:314572800,chunkBytes:8388608,chunked:true}})});return;}
    if(path==='/api/auth/me'){if(method==='PATCH'){const body=route.request().postDataJSON();writes.push({path,body});Object.assign(user,{avatar_id:body.avatarId});}data=user;}
    else if(path==='/api/users')data=[{...user},{id:memberId,name:'عضو نمونه',email:'member@test.invalid',role:'member',active:true,permissions:[]}];
    else if(path===`/api/users/${memberId}`){writes.push({path,body:route.request().postDataJSON()});data={id:memberId};}

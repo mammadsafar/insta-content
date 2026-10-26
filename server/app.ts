@@ -29,7 +29,7 @@ export async function createApp(options:{logger?:boolean;staticFiles?:boolean}={
     logger:options.logger===false?false:{level:process.env.LOG_LEVEL||'info',redact:['req.headers.cookie','req.headers.authorization','res.headers["set-cookie"]']},
     trustProxy:proxy && proxy!=='false' ? (_address:string,hop:number)=>hop<Math.max(0,Number(proxy)||0):false,
     bodyLimit:2*1024*1024,
-    requestTimeout:120_000,
+    requestTimeout:Math.max(120_000,Number(process.env.UPLOAD_REQUEST_TIMEOUT_MS)||1_800_000),
   });
   app.decorateRequest('user',null);
   await app.register(cookie);

@@ -78,3 +78,7 @@ docker compose -f compose.local.yml up -d app worker
 ```
 
 For production, use the same sequence with `docker compose --env-file .env.production -f compose.production.yml`. No bootstrap is needed for an existing installation. Account UI regression tests: `npx --no-install playwright test tests/e2e/account-settings.spec.ts`; database regressions: `tests/auth.test.ts`, `tests/bootstrap.test.ts`, and `tests/media-routes.test.ts` against a migrated isolated test database.
+
+Post analytics entry is available from **صفحه‌ها → صفحه موردنظر → آنالیز پست‌ها**. Search published posts, filter incomplete checkpoints, then choose **ورود / ویرایش دیتای آنالیز**. The form supports first-hour/next-day/later observations, content-specific metrics, unavailable flags, drafts and corrections.
+
+Large uploads now use small sequential chunks with confirmed-offset retry, an effective runtime limit from `/api/media/config`, cancellation, and explicit timeout/error messages. Migration `004_media_uploads.sql` is required before starting the new app/worker. See [Dokploy upload troubleshooting](docs/DEPLOYMENT.md#dokploy-local-upload-works-remote-stalls-partway).

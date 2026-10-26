@@ -2,13 +2,14 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { open, stat, readdir, unlink } from 'node:fs/promises';
 import { PassThrough } from 'node:stream';
 import archiver from 'archiver';
+import { registerMediaUploads, cleanupMediaUploads } from './media-uploads.js';
 import { z } from 'zod';
 import { query, one, transaction } from '../core/db.js';
 import { requireUser, requireOwner, authorize, can, audit, HttpError, type User } from '../core/security.js';
 import { contentDisposition, fileMaxBytes, parseRange, safeFilename, storagePath, storageRoot, storeUpload, removeStoredFiles, type StoredFile } from '../core/storage.js';
 
 const uuid = z.string().uuid();
-const uploadQuery = z.object({ pageId: uuid.optional(), purpose: z.enum(['content', 'feedback', 'music', 'insights', 'avatar', 'profile_avatar']).default('content') }).strict().refine(input => input.purpose === 'profile_avatar' ? !input.pageId : !!input.pageId, { message: 'صفحه برای فایل‌های صفحه الزامی است؛ عکس شخصی به صفحه وابسته نیست' });
+export const uploadQuery = z.object({ pageId: uuid.optional(), purpose: z.enum(['content', 'feedback', 'music', 'insights', 'avatar', 'profile_avatar']).default('content') }).strict().refine(input => input.purpose === 'profile_avatar' ? !input.pageId : !!input.pageId, { message: 'صفحه برای فایل‌های صفحه الزامی است؛ عکس شخصی به صفحه وابسته نیست' });
 function assetId(request: FastifyRequest): string { return z.object({ id: uuid }).parse(request.params).id; }
 /** Never expose storage paths/keys, which remain an internal implementation detail. */
 export function assetMetadata(asset: any) {
@@ -79,14 +80,18 @@ async function streamAsset(request: FastifyRequest, reply: FastifyReply, downloa
   } catch (error) { await handle.close(); throw error; }
 }
 
-export async function registerMedia(app: FastifyInstance): Promise<void> {
-  app.post('/api/media', async (request, reply) => {
-    const user = requireUser(request);
-    const input = uploadQuery.parse(request.query);
+export async function authorizeMediaUpload(user: User, input: z.infer<typeof uploadQuery>): Promise<void> {
     if (input.pageId && !await one('SELECT id FROM pages WHERE id=$1', [input.pageId])) throw new HttpError(404, 'صفحه پیدا نشد');
     if (input.purpose === 'content' || input.purpose === 'music') authorize(user, input.pageId!, 'edit');
     if (input.purpose === 'feedback') authorize(user, input.pageId!, 'suggest');
     if (input.purpose === 'avatar') requireOwner(user);
+}
+
+export async function registerMedia(app: FastifyInstance): Promise<void> {
+  app.post('/api/media', async (request, reply) => {
+    const user = requireUser(request);
+    const input = uploadQuery.parse(request.query);
+    await authorizeMediaUpload(user, input);
     let stored: StoredFile | undefined;
     let originalName = '';
     try {
@@ -113,6 +118,7 @@ export async function registerMedia(app: FastifyInstance): Promise<void> {
       throw error;
     }
   });
+  await registerMediaUploads(app, { uploadQuery, authorizeMediaUpload, assetMetadata });
   app.get('/api/media/:id', async (request, reply) => streamAsset(request, reply, false));
   app.get('/api/media/:id/download', async (request, reply) => streamAsset(request, reply, true));
   app.get('/api/content/:id/download.zip', async (request, reply) => {
@@ -152,6 +158,7 @@ export async function registerMedia(app: FastifyInstance): Promise<void> {
 /** Keep every referenced revision indefinitely; only unattached files older than the grace period expire. */
 export async function cleanupOrphans(olderThanHours = 24): Promise<number> {
   if (!Number.isFinite(olderThanHours) || olderThanHours < 1) throw new Error('Orphan grace period must be at least one hour');
+  await cleanupMediaUploads(olderThanHours);
   const removed = await transaction(async client => {
     const { rows } = await client.query(`SELECT a.* FROM assets a WHERE a.created_at < now()-($1 * interval '1 hour') AND NOT ${referencedSql()} FOR UPDATE SKIP LOCKED`, [olderThanHours]);
     for (const asset of rows) {
@@ -161,7 +168,7 @@ export async function cleanupOrphans(olderThanHours = 24): Promise<number> {
     return rows.length;
   });
   // A process can die between disk persistence and the database INSERT. Reap those too.
-  const known = new Set((await query('SELECT storage_key,thumbnail_key FROM assets')).flatMap(row => [row.storage_key, row.thumbnail_key]).filter(Boolean));
+  const known = new Set([...(await query('SELECT storage_key,thumbnail_key FROM assets')).flatMap(row => [row.storage_key, row.thumbnail_key]).filter(Boolean), ...(await query('SELECT id FROM media_uploads')).map(row => `${row.id}.pending`)]);
   let files: string[];
   try { files = await readdir(storageRoot()); } catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return removed; throw error; }
   for (const key of files) {

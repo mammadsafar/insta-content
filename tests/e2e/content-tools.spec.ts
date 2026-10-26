@@ -11,11 +11,12 @@ const item={id:contentId,page_id:pageId,type:'reel',state:'published',revision:1
   assets:assetIds.map((id,index)=>({id,original_name:['post-original.mp4','cover-original.png','music-original.mp3'][index],mime_type:['video/mp4','image/png','audio/mpeg'][index],size:originalBytes[index].length})),feedback:[],revisions:[]};
 const fieldKeys=['views','firstHourViews','nextDayViews','viewers','reach','likes','comments','shares','reposts','saves','followersGained','profileVisits','leads','directMessages','orders','attributedSales','salesAttributionNotes','videoDurationSeconds','averageWatchTimeSeconds','skipRatePercentage','reelsTabPercentage','explorePercentage','nonFollowersPercentage'];
 
-async function fixture(page:Page,dark:boolean){
+async function fixture(page:Page,dark:boolean,role='owner'){
   const writes:{path:string;method:string;body:any}[]=[],snapshots:any[]=[],weekly:any[]=[];
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.route('**/*',async route=>{
     const url=new URL(route.request().url()),path=url.pathname,method=route.request().method();let data:any=[];
+    if(path==='/api/media/config'){await route.fulfill({contentType:'application/json',body:JSON.stringify({data:{maxBytes:314572800,chunkBytes:8388608,chunked:true}})});return;}
     if(path.startsWith('/api/media/')){
       const index=assetIds.findIndex(id=>path.includes(id));
       if(path.endsWith('/download')){await route.fulfill({status:200,headers:{'Content-Type':'application/octet-stream','Content-Disposition':`attachment; filename="${item.assets[index].original_name}"`},body:originalBytes[index]});return;}
@@ -23,7 +24,7 @@ async function fixture(page:Page,dark:boolean){
     }
     if(path.startsWith('/api/')){
       if(method!=='GET')writes.push({path,method,body:route.request().postDataJSON()});
-      if(path==='/api/auth/me')data={id:pageId,name:'کاربر آزمون',email:'fixture@test.invalid',role:'owner',active:true,theme:dark?'dark':'light',permissions:[]};
+      if(path==='/api/auth/me')data={id:pageId,name:'کاربر آزمون',email:'fixture@test.invalid',role,active:true,theme:dark?'dark':'light',permissions:[]};
       else if(path==='/api/pages')data=[{id:pageId,name:'صفحه آزمون',username:'test_page',settings:{}}];
       else if(path===`/api/pages/${pageId}/content`)data=[item];
       else if(path===`/api/content/${contentId}`)data=item;
@@ -126,4 +127,22 @@ test('content details and music fields remain reachable while the date picker op
   await page.getByRole('button',{name:'ذخیره پیش‌نویس',exact:true}).scrollIntoViewIfNeeded();await expect(page.getByRole('button',{name:'ذخیره پیش‌نویس',exact:true})).toBeVisible();
   await page.getByRole('dialog').locator('.modal-heading').getByRole('button',{name:'بستن',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);
   expect(await page.evaluate(()=>document.body.style.position)).toBe('');
+});
+
+
+test('dedicated post analytics tab lets a member find published posts and enter insights',async({page},info)=>{
+ const {writes,errors}=await fixture(page,info.project.name.includes('dark'),'member');
+ await page.getByRole('button',{name:'آنالیز پست‌ها',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'دیتای آنالیز پست‌ها',exact:true})).toBeVisible();
+ await page.getByLabel('جستجوی پست برای آنالیز',{exact:true}).fill('پست منتشرشده');
+ await page.getByRole('button',{name:'ورود / ویرایش دیتای آنالیز',exact:true}).click();await fits(page);
+ await page.getByLabel('بازدید روز بعد',{exact:true}).fill('1240');
+ await page.getByLabel('حساب‌های دسترسی‌یافته',{exact:true}).fill('800');
+ await page.getByLabel('میانگین تماشا (ثانیه)',{exact:true}).fill('9.4');
+ await page.getByLabel('پسند',{exact:true}).fill('24');
+ await page.getByLabel('فروش منتسب (تومان)',{exact:true}).fill('0');
+ await page.getByRole('button',{name:'نهایی کردن مشاهده',exact:true}).click();
+ await expect(page.getByRole('button',{name:'تصحیح این مشاهده',exact:true})).toBeVisible();
+ expect(writes.find(write=>write.path===`/api/content/${contentId}/analytics`)!.body.metrics).toEqual({nextDayViews:1240,reach:800,averageWatchTimeSeconds:9.4,likes:24,attributedSales:0});
+ expect(errors).toEqual([]);await page.screenshot({path:info.outputPath('post-analytics-entry.png')});
 });

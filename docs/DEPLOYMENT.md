@@ -74,6 +74,7 @@ PostgreSQL belongs only to the internal private network. Worker uses private plu
 | `LOCAL_APP_PORT` | Local host port, default 3001; match APP_ORIGIN. |
 | `PROXY_NETWORK` | Required existing external proxy network in production. |
 | `APP_IMAGE` | Production image name/tag. |
+| `UPLOAD_REQUEST_TIMEOUT_MS` | App request timeout in milliseconds; default 1800000 (30 minutes). Reverse-proxy timeouts are configured separately. |
 | `FILE_MAX_BYTES` | Upload limit in bytes; default 314572800 (300 MiB per content file). Personal profile photos remain capped at 5 MiB. |
 | `MEDIA_ROOT` | Persistent private filesystem directory, `/app/media` in Compose. |
 | `SESSION_TTL_DAYS` | Session lifetime, bounded to 1–30 days. |
@@ -85,7 +86,7 @@ No session-signing secret or mandatory paid service is required. Session tokens 
 
 ## Files and Push
 
-The media named volume contains immutable originals and derived thumbnails. It is never publicly served. All access goes through authenticated routes; previews necessarily deliver media bytes to authorized viewers and cannot prevent browser saving or screenshots. Download preparation checks the current approval. Video thumbnails require an explicitly uploaded cover; opening a grid never downloads every video. Uploads have progress/retry; **resumable uploads are not implemented or claimed**. References in old revisions are retained indefinitely; only unattached uploads older than the grace period are cleaned.
+The media named volume contains immutable originals and derived thumbnails. It is never publicly served. All access goes through authenticated routes; previews necessarily deliver media bytes to authorized viewers and cannot prevent browser saving or screenshots. Download preparation checks the current approval. Video thumbnails require an explicitly uploaded cover; opening a grid never downloads every video. Uploads are queued per picker. Files larger than 2 MiB use 2 MiB chunks (server accepts up to 8 MiB per request); retry resumes from the confirmed server offset while the picker stays open. Closing/reloading the page loses the in-memory file selection; select the file again to start a new session. Upload sessions expire after 24 hours without a successful chunk. Small files use multipart upload. Original bytes are validated and assembled using streams. References in old revisions are retained indefinitely; only unattached uploads older than the grace period are cleaned.
 
 Generate optional VAPID keys yourself with the installed dependency:
 
@@ -108,3 +109,32 @@ E2E_BASE_URL=http://localhost:3000 E2E_EMAIL=TEST_EMAIL E2E_PASSWORD=TEST_PASSWO
 ```
 
 Integration tests require an isolated `_test` database. Playwright is configured to use the already installed Google Chrome; it does not download a browser. Viewport emulation is not real iOS/Android-device verification. See ACCEPTANCE_CRITERIA and PROGRESS for exact observed results.
+
+### Dokploy: local upload works, remote stalls partway
+
+Changing only `FILE_MAX_BYTES` does not change the reverse proxy's request timeout, nor does redeploying an old code/image add the chunk protocol. Apply this source version, build the app/worker image, run migration `004_media_uploads.sql` using `node dist/scripts/migrate.js` in the newly built app container, then restart the updated app and worker. Never run bootstrap again for this upgrade. Set Dokploy environment variables:
+
+```dotenv
+FILE_MAX_BYTES=314572800
+UPLOAD_REQUEST_TIMEOUT_MS=1800000
+```
+
+In the **app container** console, inspect only the relevant nonsecret settings:
+
+```sh
+node -e 'console.log({FILE_MAX_BYTES:process.env.FILE_MAX_BYTES,UPLOAD_REQUEST_TIMEOUT_MS:process.env.UPLOAD_REQUEST_TIMEOUT_MS})'
+```
+
+While logged in, open `/api/media/config`: the updated server must return `maxBytes: 314572800`, `chunkBytes: 8388608`, and `chunked: true`. The upload picker displays the effective per-file limit. A missing route or HTML response indicates the new backend is not serving this domain.
+
+If an upload consistently stops at a similar elapsed time, inspect Traefik access/error logs for that request. Traefik's documented `entryPoints.<name>.transport.respondingTimeouts.readTimeout` default is 60s and covers the entire request body, independently of the app's env ([official reference](https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/)). Chunking shortens requests. If the connection is too slow even for small chunks, merge a bounded timeout into the existing HTTP/HTTPS entry point configuration in Dokploy's Traefik settings, preserving its other settings:
+
+```yaml
+entryPoints:
+  websecure:
+    transport:
+      respondingTimeouts:
+        readTimeout: 300s
+```
+
+Use the actual entry point name configured on the server; this is **Traefik static configuration**, not an app environment variable or middleware label. Applying it may require restarting Traefik and affects the shared proxy. Do not replace the entire existing Traefik configuration with this fragment. The user performs infrastructure changes. No server-side proxy configuration was changed by this code update.
